@@ -1,10 +1,101 @@
 import React, { Component } from 'react';
 import { Map, GoogleApiWrapper, Marker, Polygon, InfoWindow } from 'google-maps-react';
 
-const mapStyles = {
+const mapStyles = [{
   width: '100%',
   height: '100%'
-};
+},
+    {
+      "featureType": "administrative",
+      "elementType": "all",
+      "stylers": [
+          {
+              "visibility": "on"
+          },
+          {
+              "weight": "2.19"
+          }
+      ]
+  },
+  {
+      "featureType": "landscape",
+      "elementType": "all",
+      "stylers": [
+          {
+              "color": "#f2e5d4"
+          }
+      ]
+  },
+  {
+      "featureType": "poi.park",
+      "elementType": "geometry",
+      "stylers": [
+          {
+              "color": "#c5dac6"
+          }
+      ]
+  },
+  {
+      "featureType": "poi.park",
+      "elementType": "labels",
+      "stylers": [
+          {
+              "visibility": "on"
+          },
+          {
+              "lightness": 20
+          }
+      ]
+  },
+  {
+      "featureType": "road",
+      "elementType": "all",
+      "stylers": [
+          {
+              "lightness": 20
+          }
+      ]
+  },
+  {
+      "featureType": "road.highway",
+      "elementType": "geometry",
+      "stylers": [
+          {
+              "color": "#c5c6c6"
+          }
+      ]
+  },
+  {
+      "featureType": "road.arterial",
+      "elementType": "geometry",
+      "stylers": [
+          {
+              "color": "#e4d7c6"
+          }
+      ]
+  },
+  {
+      "featureType": "road.local",
+      "elementType": "geometry",
+      "stylers": [
+          {
+              "color": "#fbfaf7"
+          }
+      ]
+  },
+  {
+      "featureType": "water",
+      "elementType": "all",
+      "stylers": [
+          {
+              "visibility": "on"
+          },
+          {
+              "color": "#acbcc9"
+          }
+      ]
+  }
+]
 
 
 export class MapContainer extends Component {
@@ -44,7 +135,7 @@ export class MapContainer extends Component {
         google={this.props.google}
         onClick={this.onMapClicked}
         zoom={6}
-        style={mapStyles}
+        styles={mapStyles}
         initialCenter={
           {
             lat: -37.801993,
@@ -75,5 +166,5 @@ export class MapContainer extends Component {
 }
 
 export default GoogleApiWrapper({
-    apiKey: 'AIzaSyBs5U6XwYnch30ZxE78uS3MLgpjetbBH5A'
+    apiKey: 'AIzaSyDLyQLWVoJpRYadYLuIffczAYjmr3CCvo0'
   })(MapContainer);
