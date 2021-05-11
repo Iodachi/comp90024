@@ -97,7 +97,6 @@ const mapStyles = [{
   }
 ]
 
-
 export class MapContainer extends Component {
 
   state = {
