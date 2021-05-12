@@ -36,6 +36,9 @@ export default function Sidebar() {
     setSelectedValue(event.target.value);
   };
 
+  const clearFilters = ( )=> {
+    setSelectedDate(null)
+  }
   function valuetext(value) {
     return `${value}`;
   }
@@ -132,9 +135,15 @@ export default function Sidebar() {
     />
 </Grid>
 
+<Grid>
 <Button variant="outlined" color="primary">
   Apply
 </Button>
+<Button variant="outlined" color="primary"
+ onClick={clearFilters}>
+  Clear
+</Button>
+</Grid>
 </MuiPickersUtilsProvider>
     </Menu>
   );
