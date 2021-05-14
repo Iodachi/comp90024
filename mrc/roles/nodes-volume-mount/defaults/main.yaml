@@ -1,0 +1,11 @@
+#
+# Part of Assignment 2 - COMP90024 course at The University of Melbourne 
+#
+# Cluster and Cloud Computing - Team 24 
+#
+# Location: Melbourne
+#
+---
+volumes:
+  - mountpoint: /var/lib/docker
+  - mountpoint: /data
