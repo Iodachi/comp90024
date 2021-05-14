@@ -1,11 +1,101 @@
 import React, { Component } from 'react';
-import { Map, GoogleApiWrapper, Marker, Polygon, InfoWindow } from 'google-maps-react';
+import { Map, GoogleApiWrapper, Marker, InfoWindow } from 'google-maps-react';
 
-const mapStyles = {
+const mapStyles = [{
   width: '100%',
   height: '100%'
-};
-
+},
+    {
+      "featureType": "administrative",
+      "elementType": "all",
+      "stylers": [
+          {
+              "visibility": "on"
+          },
+          {
+              "weight": "2.19"
+          }
+      ]
+  },
+  {
+      "featureType": "landscape",
+      "elementType": "all",
+      "stylers": [
+          {
+              "color": "#f2e5d4"
+          }
+      ]
+  },
+  {
+      "featureType": "poi.park",
+      "elementType": "geometry",
+      "stylers": [
+          {
+              "color": "#c5dac6"
+          }
+      ]
+  },
+  {
+      "featureType": "poi.park",
+      "elementType": "labels",
+      "stylers": [
+          {
+              "visibility": "on"
+          },
+          {
+              "lightness": 20
+          }
+      ]
+  },
+  {
+      "featureType": "road",
+      "elementType": "all",
+      "stylers": [
+          {
+              "lightness": 20
+          }
+      ]
+  },
+  {
+      "featureType": "road.highway",
+      "elementType": "geometry",
+      "stylers": [
+          {
+              "color": "#c5c6c6"
+          }
+      ]
+  },
+  {
+      "featureType": "road.arterial",
+      "elementType": "geometry",
+      "stylers": [
+          {
+              "color": "#e4d7c6"
+          }
+      ]
+  },
+  {
+      "featureType": "road.local",
+      "elementType": "geometry",
+      "stylers": [
+          {
+              "color": "#fbfaf7"
+          }
+      ]
+  },
+  {
+      "featureType": "water",
+      "elementType": "all",
+      "stylers": [
+          {
+              "visibility": "on"
+          },
+          {
+              "color": "#acbcc9"
+          }
+      ]
+  }
+]
 
 export class MapContainer extends Component {
 
@@ -32,19 +122,19 @@ export class MapContainer extends Component {
     };
 
   render() {
-    const triangleCoords = [
-      {lat: 25.774, lng: -80.190},
-      {lat: 18.466, lng: -66.118},
-      {lat: 32.321, lng: -64.757},
-      {lat: 25.774, lng: -80.190}
-    ];
+    // const triangleCoords = [
+    //   {lat: 25.774, lng: -80.190},
+    //   {lat: 18.466, lng: -66.118},
+    //   {lat: 32.321, lng: -64.757},
+    //   {lat: 25.774, lng: -80.190}
+    // ];
 
     return (
       <Map
         google={this.props.google}
         onClick={this.onMapClicked}
         zoom={6}
-        style={mapStyles}
+        styles={mapStyles}
         initialCenter={
           {
             lat: -37.801993,
@@ -56,16 +146,16 @@ export class MapContainer extends Component {
           marker={this.state.activeMarker}
           visible={this.state.showingInfoWindow}>
             <div>
-              <h1>blabla</h1>
+              <h4>Twitter</h4>
             </div>
         </InfoWindow>
-        <Polygon
+        {/* <Polygon
           paths={triangleCoords}
           strokeColor="#0000FF"
           strokeOpacity={0.8}
           strokeWeight={2}
           fillColor="#0000FF"
-          fillOpacity={0.35} />
+          fillOpacity={0.35} /> */}
         <Marker
         onClick={this.onMarkerClick}
          name={'University of Melbourne'}></Marker>
@@ -75,5 +165,5 @@ export class MapContainer extends Component {
 }
 
 export default GoogleApiWrapper({
-    apiKey: 'AIzaSyBs5U6XwYnch30ZxE78uS3MLgpjetbBH5A'
+    apiKey: 'AIzaSyDLyQLWVoJpRYadYLuIffczAYjmr3CCvo0'
   })(MapContainer);

@@ -9,6 +9,8 @@ import {
   KeyboardDatePicker,
   KeyboardTimePicker,
 } from '@material-ui/pickers';
+
+import { Button, ButtonGroup } from '@material-ui/core'
 import 'date-fns';
 
 import Radio from '@material-ui/core/Radio';
@@ -19,6 +21,8 @@ import FormLabel from '@material-ui/core/FormLabel';
 
 import Typography from '@material-ui/core/Typography';
 import Slider from '@material-ui/core/Slider';
+
+import history from '../history'
 
 export default function Sidebar() {
   const [selectedDate, setSelectedDate] = useState(new Date('2021-01-01'));
@@ -32,16 +36,26 @@ export default function Sidebar() {
     setSelectedValue(event.target.value);
   };
 
+  const clearFilters = ( )=> {
+    setSelectedDate(null)
+  }
   function valuetext(value) {
     return `${value}`;
   }
 
   return (
     <Menu>
-      {/* <a className="menu-item" href="/">
-        Home
-      </a> */}
-      {/* date and time picker */}
+      <ButtonGroup fullWidth variant="text" color="primary" aria-label="text primary button group">
+      <Button variant="outlined" color="primary"
+        onClick={() => history.push('/')}>
+        Map
+      </Button>
+      <Button variant="outlined" color="primary"
+        onClick={() => history.push('/Analysis')}>
+        Analysis
+      </Button>
+      </ButtonGroup>
+
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
       <Grid container justify="space-around">
       <KeyboardDatePicker
@@ -91,7 +105,6 @@ export default function Sidebar() {
           }}
         />
          </Grid>
-    </MuiPickersUtilsProvider>
 
 
   <Grid>
@@ -121,6 +134,17 @@ export default function Sidebar() {
       marks
     />
 </Grid>
+
+<Grid>
+<Button variant="outlined" color="primary">
+  Apply
+</Button>
+<Button variant="outlined" color="primary"
+ onClick={clearFilters}>
+  Clear
+</Button>
+</Grid>
+</MuiPickersUtilsProvider>
     </Menu>
   );
 };
