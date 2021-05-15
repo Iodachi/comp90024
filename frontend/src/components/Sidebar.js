@@ -25,19 +25,38 @@ import Slider from '@material-ui/core/Slider';
 import history from '../history'
 
 export default function Sidebar() {
-  const [selectedDate, setSelectedDate] = useState(new Date('2021-01-01'));
-  const [selectedValue, setSelectedValue] = React.useState('a');
+  const [selectedStartDate, setStartDate] = useState(null);
+  const [selectedEndDate, setEndDate] = useState(null);
+  const [selectedStartTime, setStartTime] = useState(null);
+  const [selectedEndTime, setEndTime] = useState(null);
+  const [selectedValue, setSelectedGender] = React.useState('a');
 
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
+  const handleStartDateChange = (date) => {
+    setStartDate(date);
+  };
+
+  const handleEndDateChange = (date) => {
+    setEndDate(date);
+  };
+
+  const handleStartTimeChange = (time) => {
+    setStartTime(time);
+  };
+
+  const handleEndTimeChange = (time) => {
+    setEndTime(time);
   };
 
   const handleChange = (event) => {
-    setSelectedValue(event.target.value);
+    setSelectedGender(event.target.value);
   };
 
   const clearFilters = ( )=> {
-    setSelectedDate(null)
+    setStartDate(null)
+    setEndDate(null);
+    setStartTime(null);
+    setEndTime(null);
+    setSelectedGender(null);
   }
   function valuetext(value) {
     return `${value}`;
@@ -65,8 +84,8 @@ export default function Sidebar() {
           margin="normal"
           id="date-picker-inline"
           label="Start date"
-          value={selectedDate}
-          onChange={handleDateChange}
+          value={selectedStartDate}
+          onChange={handleStartDateChange}
           KeyboardButtonProps={{
             'aria-label': 'change date',
           }}
@@ -78,8 +97,8 @@ export default function Sidebar() {
           margin="normal"
           id="date-picker-inline"
           label="End date"
-          value={selectedDate}
-          onChange={handleDateChange}
+          value={selectedEndDate}
+          onChange={handleEndDateChange}
           KeyboardButtonProps={{
             'aria-label': 'change date',
           }}
@@ -88,8 +107,8 @@ export default function Sidebar() {
           margin="normal"
           id="time-picker"
           label="Start time"
-          value={selectedDate}
-          onChange={handleDateChange}
+          value={selectedStartTime}
+          onChange={handleStartTimeChange}
           KeyboardButtonProps={{
             'aria-label': 'change time',
           }}
@@ -98,8 +117,8 @@ export default function Sidebar() {
           margin="normal"
           id="time-picker"
           label="End time"
-          value={selectedDate}
-          onChange={handleDateChange}
+          value={selectedEndTime}
+          onChange={handleEndTimeChange}
           KeyboardButtonProps={{
             'aria-label': 'change time',
           }}
