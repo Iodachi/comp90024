@@ -1,7 +1,5 @@
 # coding: utf-8
 """
-@Author: Lihuan Zhang
-
 This files including the views that used to control CORS problem
 """
 
