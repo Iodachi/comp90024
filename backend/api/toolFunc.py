@@ -28,12 +28,10 @@ def read_n_line(n, mode):
         # Opening JSON file
         n = int(n)
         if mode == 'raw':
-            data = read_json_line('./api/data/test.data.jsonl', n)
+            data = read_json_line('./backend/api/data/test.data.jsonl', n)
         
         return data
     except:
         print('ERROR: Number of line requested is illegal!!!')
         return None
     
-
-
