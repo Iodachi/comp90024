@@ -20,21 +20,29 @@ def get_n_tweet(request, n):
 
 def get_death_number(request, month):
     if request.method == 'GET':
-        resp = {}
+        resp = {'series': []}
         try:
             cdb = CouchDB()
             death_db = cdb.get_db('death')
             if death_db:
                 data = death_db['20f65008d43b65f035c3fc6f4a2399c6']
+                d = {}
                 if month == 'all':
                     for k, v in data.items():
-                        if k != 'category':
-                            resp[k] = v
+                        if k != 'category' and k[0] != '_':
+                            d['name'] = k
+                            d['data'] = v
+                            resp['series'].append(d)
+                            d = {}
+
                 elif month in data['category']:
                     m = data['category'].index(month)
                     for k, v in data.items():
-                        if k != 'category':
-                            resp[k] = v[m]
+                        if k != 'category' and k[0] != '_':
+                            d['name'] = k
+                            d['data'] = v[m]
+                            resp['series'].append(d)
+                            d = {}
                 else:
                     resp = None
         
