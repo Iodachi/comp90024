@@ -29,16 +29,6 @@ function Analysis() {
   )
  
   return (
-    <div>
-    <div
-      style={{
-        width: '400px',
-        height: '300px'
-      }}
-    >
-      <Chart data={data} series={series} axes={axes} />
-    </div>
-
   <div
     style={{
       width: '400px',
@@ -46,7 +36,6 @@ function Analysis() {
     }}
   >
    <DeathBarChart/>
-  </div>
   </div>
   )
 }
