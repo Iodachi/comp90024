@@ -121,6 +121,24 @@ export class MapContainer extends Component {
       }
     };
 
+    // componentDidMount() {
+    //   fetch("http://127.0.0.1:8000/api/3")
+    //     .then(res => res.json())
+    //     .then(
+    //       (result) => {
+    //         this.setState({
+    //           isLoaded: true,
+    //           items: result.items
+    //         });
+    //       },
+    //       (error) => {
+    //         this.setState({
+    //           isLoaded: true,
+    //           error
+    //         });
+    //       } )
+    //     }
+
   render() {
     // const triangleCoords = [
     //   {lat: 25.774, lng: -80.190},
