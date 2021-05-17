@@ -1,6 +1,7 @@
 import React from 'react'
 import { Chart } from 'react-charts'
 import DeathBarChart from '../components/DeathBarChart'
+import EmploymentBarChart from '../components/EmploymentBarChart'
  
 function Analysis() {
   const data = React.useMemo(
@@ -29,14 +30,14 @@ function Analysis() {
   )
  
   return (
-  <div
-    style={{
-      width: '400px',
-      height: '300px'
-    }}
-  >
-   <DeathBarChart/>
-  </div>
+    <div>
+      <div>
+        <DeathBarChart/>
+    </div>
+    <div>
+      <EmploymentBarChart/>
+    </div>
+</div>
   )
 }
 
