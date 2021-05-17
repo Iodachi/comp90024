@@ -1,10 +1,10 @@
 import React from "react";
-import MapContainer from '../components/Map'
+import Mapbox from "../components/Mapbox";
 
 
 const Home = () => (
       <div>
-        <MapContainer/>
+        <Mapbox/>
       </div>
 );
 
