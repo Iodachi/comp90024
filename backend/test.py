@@ -51,11 +51,7 @@ class CouchDB(object):
         else:
             print('In create_db(): Server is not connected')
             return None
-import json
-def read_small_json():
-    with open('/home/hgz/Desktop/gt/comp90024/backend/api/data/death.json') as f:
-        data = json.load(f)
-    return data
+
 
 '''cdb = CouchDB()
 twitter_db = cdb.get_db('twitter')

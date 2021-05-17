@@ -7,7 +7,7 @@ import couchdb
 from test import *
 
 # Create your views here.
-print('http://127.0.0.1:8000/api/3')
+print('http://127.0.0.1:8000/api/test/3')
 def get_n_tweet(request, n):
     if request.method == 'GET':
         resp = read_n_line(n, 'raw')
@@ -18,6 +18,8 @@ def get_n_tweet(request, n):
     else:
         return HttpResponseBadRequest('request should be get')
 
+
+print('http://127.0.0.1:8000/api/death/all')
 def get_death_number(request, month):
     if request.method == 'GET':
         resp = {'series': []}
@@ -50,8 +52,26 @@ def get_death_number(request, month):
             resp = None
 
         if resp:
-            return HttpResponse(ujson.dumps(resp), content_type='application/json')
+            print(ujson.dumps(resp))
+            return HttpResponse(json.dumps(resp), content_type='application/json')
         else:
             return HttpResponseBadRequest(resp)
     else:
         return HttpResponseBadRequest('request should be GET')
+
+
+
+
+print('http://127.0.0.1:8000/api/employment')
+def get_employment(request):
+    if request.method == 'GET':
+        cdb = CouchDB()
+        e_db = cdb.get_db('employment')
+        data = e_db['20f65008d43b65f035c3fc6f4a23ccec']
+        resp = data
+        if resp:
+            return HttpResponse(ujson.dumps(resp), content_type='application/json')
+        else:
+            return HttpResponseBadRequest(resp)
+    else:
+        return HttpResponseBadRequest('request should be get')

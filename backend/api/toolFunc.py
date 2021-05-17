@@ -35,3 +35,9 @@ def read_n_line(n, mode):
         print('ERROR: Number of line requested is illegal!!!')
         return None
     
+
+def make_name_data(name, data):
+    resp = {}
+    resp['name'] = name
+    resp['data'] = data
+    return resp
