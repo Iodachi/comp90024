@@ -1,5 +1,5 @@
 import 'mapbox-gl/dist/mapbox-gl.css';
-import melb from "./../melb.geojson"
+//import melb from "./../melb.geojson"
 import vic from "./../vic.geojson"
 import React from 'react'
 import mapboxgl from '!mapbox-gl';// eslint-disable-line import/no-webpack-loader-syntax
@@ -19,15 +19,15 @@ export class Mapbox extends React.Component {
             center: [144.959087, -37.801993],
             zoom: 9,
         });
-        var hoveredMelbId =  null;
+        //var hoveredMelbId =  null;
         var hoveredVicId =  null;
 
         map.on('load', function () {
-            map.addSource("melb", {
-                "type": "geojson",
-                "data": melb,
-                'generateId': true 
-            });
+            // map.addSource("melb", {
+            //     "type": "geojson",
+            //     "data": melb,
+            //     'generateId': true 
+            // });
 
             map.addSource("vic", {
                 "type": "geojson",
@@ -35,49 +35,49 @@ export class Mapbox extends React.Component {
                 'generateId': true 
             });
              
-            map.addLayer({
-                "id": "melb-fills",
-                "type": "fill",
-                "source": "melb",
-                "layout": {},
-                "paint": {
-                "fill-color": "#627BC1",
-                "fill-opacity": ["case",
-                ["boolean", ["feature-state", "hover"], false],
-                    0.5,
-                    0.1
-                ]
-                }
-            });
+            // map.addLayer({
+            //     "id": "melb-fills",
+            //     "type": "fill",
+            //     "source": "melb",
+            //     "layout": {},
+            //     "paint": {
+            //     "fill-color": "#627BC1",
+            //     "fill-opacity": ["case",
+            //     ["boolean", ["feature-state", "hover"], false],
+            //         0.5,
+            //         0.1
+            //     ]
+            //     }
+            // });
              
-            map.addLayer({
-                "id": "melb-borders",
-                "type": "line",
-                "source": "melb",
-                "layout": {},
-                "paint": {
-                "line-color": "#627BC1",
-                "line-width": 2
-                }
-            });
+            // map.addLayer({
+            //     "id": "melb-borders",
+            //     "type": "line",
+            //     "source": "melb",
+            //     "layout": {},
+            //     "paint": {
+            //     "line-color": "#627BC1",
+            //     "line-width": 2
+            //     }
+            // });
              
-            map.on("mousemove", "melb-fills", function(e) {
-                console.log(e)
-                if (e.features.length > 0) {
-                if (hoveredMelbId) {
-                    map.setFeatureState({source: 'melb', id: hoveredMelbId}, { hover: false});
-                }
-                hoveredMelbId = e.features[0].id;
-                map.setFeatureState({source: 'melb', id: hoveredMelbId}, { hover: true});
-                }
-            });
+            // map.on("mousemove", "melb-fills", function(e) {
+            //     console.log(e)
+            //     if (e.features.length > 0) {
+            //     if (hoveredMelbId) {
+            //         map.setFeatureState({source: 'melb', id: hoveredMelbId}, { hover: false});
+            //     }
+            //     hoveredMelbId = e.features[0].id;
+            //     map.setFeatureState({source: 'melb', id: hoveredMelbId}, { hover: true});
+            //     }
+            // });
              
-            map.on("mouseleave", "melb-fills", function() {
-                if (hoveredMelbId) {
-                    map.setFeatureState({source: 'melb', id: hoveredMelbId}, { hover: false});
-                }
-                hoveredMelbId =  null;
-            });
+            // map.on("mouseleave", "melb-fills", function() {
+            //     if (hoveredMelbId) {
+            //         map.setFeatureState({source: 'melb', id: hoveredMelbId}, { hover: false});
+            //     }
+            //     hoveredMelbId =  null;
+            // });
 
             map.addLayer({
                 "id": "vic-fills",
@@ -106,7 +106,6 @@ export class Mapbox extends React.Component {
             });
              
             map.on("mousemove", "vic-fills", function(e) {
-                console.log(e)
                 if (e.features.length > 0) {
                 if (hoveredVicId) {
                     map.setFeatureState({source: 'vic', id: hoveredVicId}, { hover: false});
@@ -122,6 +121,13 @@ export class Mapbox extends React.Component {
                 }
                 hoveredVicId =  null;
             });
+
+            map.on('click', 'vic-fills', function (e) {
+                new mapboxgl.Popup()
+                .setLngLat(e.lngLat)
+                .setHTML(e.features[0].properties.ABB_NAME.toLowerCase())
+                .addTo(map);
+                });
         });
     }
         
