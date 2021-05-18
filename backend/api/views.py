@@ -75,3 +75,20 @@ def get_employment(request):
             return HttpResponseBadRequest(resp)
     else:
         return HttpResponseBadRequest('request should be get')
+
+print('http://127.0.0.1:8000/api/tweet/top/word/5/Wed-Jan-01-00:00:00-+0000-2020/Fri-Jan-1-00:00:00-+0000-2021')
+def get_top(request, mode = 'word', n = 20, timeS = None, timeE=None):
+    if request.method == 'GET':
+        cdb = CouchDB()
+        data = cdb.get_db('hotword_50')
+        l = generate_data_key(timeS,timeE)
+        print('here')
+        resp = get_top_word_1(l,data, mode, n)
+        if resp:
+            return HttpResponse(ujson.dumps(resp), content_type='application/json')
+        else:
+            return HttpResponseBadRequest(resp)
+    else:
+        return HttpResponseBadRequest('request should be get')
+
+

@@ -51,11 +51,17 @@ class CouchDB(object):
         else:
             print('In create_db(): Server is not connected')
             return None
-
-
-'''cdb = CouchDB()
-twitter_db = cdb.get_db('twitter')
+'''import re
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import TweetTokenizer
+#nltk.download('stopwords')
+cdb = CouchDB()
+twitter_db = cdb.get_db('melbourne_2020')
 print('here')
-view =  twitter_db.view('_design/language/_view/language',limit=20, group = True)
+view =  twitter_db.iterview('_design/new views/_view/create-at_text',100)
+c = 0
 for v in view:
-    print(v.doc, '----', v.value, '---',v.key)'''
+    c+=1
+    print(v.key[0], v.key[1])
+print(c)'''
