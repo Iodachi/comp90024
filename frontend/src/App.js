@@ -1,15 +1,39 @@
 
 import './App.css';
-import Routes from './Routes';
 import Sidebar from './components/Sidebar'
+import React from "react";
+import { Router, Switch, Route } from "react-router-dom";
 
-function App() {
+import Analysis from "./pages/Analysis";
+import Home from "./pages/Home";
+import history from './history';
+class App extends React.Component{
+  constructor(props) {
+    super(props);
+    this.state = {
+      scenario: null
+    }
+  }
+
+  callbackFunction = (childData) => {
+    this.setState({
+      scenario: childData
+    })
+  };
+
+  render(){
   return (
     <div>
-      <Sidebar />
-      <Routes/>
+      <Sidebar parentCallback = {this.callbackFunction}/>
+      <Router history={history}>
+                <Switch>
+                    <Route path="/" exact render={(props) => <Home globalStore={{scenario: this.state.scenario}} {...props} /> } />
+                    <Route path="/Analysis" component={Analysis} />
+                </Switch>
+            </Router>
     </div>
   );
+  }
 }
 
 export default App;
