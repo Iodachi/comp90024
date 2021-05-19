@@ -105,3 +105,59 @@ def generate_data_key(start, end):
         l.append(start.strftime('%Y/%m/%d/%H'))
         start += delta
     return l
+
+
+def wash_lga_name(lga_name, real_name):
+    dif_len, a_len, b_len = 0,0,0
+    result_name = '_'
+    for name in real_name:
+        if name.lower() in lga_name.lower():
+            if a_len == 0:
+                a_len = len(name)
+                b_len = len(lga_name)
+                dif_len = abs(a_len - b_len)
+                result_name = name
+            else:
+                a_len = len(name)
+                b_len = len(lga_name)
+                if abs(a_len-b_len) < dif_len:
+                    dif_len = abs(a_len - b_len)
+                    result_name = name
+    if len(result_name) == 0:
+        return lga_name
+    else:
+        return result_name
+
+
+def process_lang(dataset):
+    resp = {'series':[]}
+    d = {}
+    lang = {}
+    for index in range(len(dataset)):
+        area = dataset.loc(index, 'LGA 2011')
+        if area in d:
+            language = dataset.loc(index, 'Language Spoken at Home')
+            if language in lang:
+                lang[language] += dataset.loc(index, 'Value')
+
+            return
+
+
+def make_geo(loc):
+    di = {"type":"Feature","properties":{},"geometry": { "type": "Point"} }
+    di["geometry"]["coordinates"] = loc
+    return di
+
+
+def precess_case(dataset, loc, rname):
+    resp = {"type": "FeatureCollection","features": []}
+    for index in range(len(dataset)):
+        lga_name = dataset.loc[index, 'Localgovernmentarea']
+        real_name = wash_lga_name(lga_name, rname)
+        if real_name in loc:
+            cord = loc[real_name]
+        else:
+            cord = loc['Melbourne']
+        geo = make_geo(cord)
+        resp['features'].append(geo)
+    return resp
