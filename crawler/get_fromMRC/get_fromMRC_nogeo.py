@@ -14,13 +14,13 @@ secure_remote_server = Server('http://admin:admin@172.26.133.210:5984/')
 
 
 parser = argparse.ArgumentParser(description='COMP90024 Project Scrape Research Data')
-parser.add_argument('--batch', type=int, default=100)
-parser.add_argument('--total_forMonth', type=int, default=200000)
+parser.add_argument('--batch', type=int, default=1000)
+parser.add_argument('--total_forMonth', type=int, default=10000)
 parser.add_argument('--location', type=str, default= 'melbourne')
-parser.add_argument('--start', type=str, default='2018,1,1')
-parser.add_argument('--year', type=int, default=2018)
-parser.add_argument('--monthlength', type=int, default=12)
-parser.add_argument('--end', type=str, default='2018,12,31')
+parser.add_argument('--start', type=str, default='2020,10,1')
+parser.add_argument('--year', type=int, default=2020)
+parser.add_argument('--monthlength', type=int, default=3)
+parser.add_argument('--end', type=str, default='2020,12,31')
 
 args = parser.parse_args()
 # argsparser
@@ -30,8 +30,8 @@ BATCHSIZE = args.batch
 
 start_key = '[\"'+ args.location +'\",'+args.start +']'
 end_key = '[\"'+ args.location +'\",'+args.end +']'
-month = args.monthlength
-serverName = args.location+str(args.year)
+month = args.monthlength 
+serverName = args.location+str(args.year)+'_all'
 try:
     db = secure_remote_server.create(serverName)
 except:
@@ -39,12 +39,13 @@ except:
 params={'include_docs':'true','reduce':'false','start_key':start_key,'end_key':end_key,"skip": "0", "limit": str(BATCHSIZE)}
 TOTALSIZE = args.total_forMonth
 
-count = 1
+count = 0
 tweetlist = []
 while count<=month:
     num = 0
     time = None
     message=requests.get(url,params,auth=('readonly', 'cainaimeeshaLu4Lejoo9ooW4jiopeid'))
+    
     dataset = message.json()
     if len(dataset["rows"]) == 0:
               
@@ -63,8 +64,10 @@ while count<=month:
         params['skip'] = str(temp)
 
         # Message to dict
-        dataset = message.json()
- 
+        try:
+            dataset = message.json()
+        except:
+            continue
     # retrive all tweets
         tweetlst = dataset["rows"]
         
