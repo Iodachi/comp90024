@@ -7,7 +7,7 @@ import couchdb
 from couchdb.client import Server
 
 secure_remote_server = Server('http://admin:admin@172.26.133.210:5984/')
-db = secure_remote_server.create('melbourne_2020')
+db = secure_remote_server.create('melbourne20_21')
 # parser = argparse.ArgumentParser(description='COMP90024 Project Scrape Research Data')
 # parser.add_argument('--batch', type=int, default=100)
 # parser.add_argument('--total', type=int, default=100)
@@ -17,11 +17,11 @@ db = secure_remote_server.create('melbourne_2020')
 
 # argsparser
 url = 'http://couchdb.socmedia.bigtwitter.cloud.edu.au/twitter/_design/twitter/_view/summary'
-BATCHSIZE = 100
+BATCHSIZE = 1000
 #该地区在sydney那里
 
-params={'include_docs':'true','reduce':'false','start_key':'[\"melbourne\",2020,1,1]','end_key':'[\"melbourne\",2020,12,31]',"skip": "0", "limit": str(BATCHSIZE)}
-TOTALSIZE = 100000
+params={'include_docs':'true','reduce':'false','start_key':'[\"melbourne\",2020,10,2]','end_key':'[\"melbourne\",2020,10,2]',"skip": "0", "limit": str(BATCHSIZE)}
+TOTALSIZE = 80000
 num = 0
 tweetlist = []
 while num<TOTALSIZE:
@@ -40,6 +40,7 @@ while num<TOTALSIZE:
     tweetlst = dataset["rows"]
     print(str(num) + "Tweets scraped")
     for tweet in tweetlst:
+
         try:
             dataDict = {}
             dataDict["id"] = tweet["id"]
@@ -75,7 +76,8 @@ while num<TOTALSIZE:
             dataDict['retweet'] = tweet["doc"]['retweet_count']
             dataDict['favorite'] = tweet['doc']['favorite_count']
             dataDict['language'] = tweet['doc']['lang']
-            doc_id, doc_rev = db.save(dataDict)   
+            if (len(dataDict['text'].split(' '))>5):
+                doc_id, doc_rev = db.save(dataDict)   
         except Exception as e:
 
             print(e)
