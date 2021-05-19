@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { bubble as Menu } from 'react-burger-menu';
 import './Sidebar.css'
 import 'react-calendar/dist/Calendar.css';
@@ -10,58 +10,95 @@ import {
   KeyboardTimePicker,
 } from '@material-ui/pickers';
 
-import { Button, ButtonGroup } from '@material-ui/core'
+import { Button, ButtonGroup, Box, Switch, FormControl, FormLabel, FormControlLabel, Radio, RadioGroup} from '@material-ui/core'
 import 'date-fns';
-
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
-
-import Typography from '@material-ui/core/Typography';
-import Slider from '@material-ui/core/Slider';
+import Popup from 'reactjs-popup';
 
 import history from '../history'
+import TopWordBarChart from './TopWordBarChart';
+import { withStyles } from '@material-ui/core/styles';
 
-export default function Sidebar() {
-  const [selectedStartDate, setStartDate] = useState(null);
-  const [selectedEndDate, setEndDate] = useState(null);
-  const [selectedStartTime, setStartTime] = useState(null);
-  const [selectedEndTime, setEndTime] = useState(null);
-  const [selectedValue, setSelectedGender] = React.useState('a');
+const AntSwitch = withStyles((theme) => ({
+  root: {
+    width: 28,
+    height: 16,
+    padding: 0,
+    display: 'flex',
+  },
+  switchBase: {
+    padding: 2,
+    color: theme.palette.grey[500],
+    '&$checked': {
+      transform: 'translateX(12px)',
+      color: theme.palette.common.white,
+      '& + $track': {
+        opacity: 1,
+        backgroundColor: theme.palette.primary.main,
+        borderColor: theme.palette.primary.main,
+      },
+    },
+  },
+  thumb: {
+    width: 12,
+    height: 12,
+    boxShadow: 'none',
+  },
+  track: {
+    border: `1px solid ${theme.palette.grey[500]}`,
+    borderRadius: 16 / 2,
+    opacity: 1,
+    backgroundColor: theme.palette.common.white,
+  },
+  checked: {},
+}))(Switch);
 
-  const handleStartDateChange = (date) => {
-    setStartDate(date);
-  };
-
-  const handleEndDateChange = (date) => {
-    setEndDate(date);
-  };
-
-  const handleStartTimeChange = (time) => {
-    setStartTime(time);
-  };
-
-  const handleEndTimeChange = (time) => {
-    setEndTime(time);
-  };
-
-  const handleChange = (event) => {
-    setSelectedGender(event.target.value);
-  };
-
-  const clearFilters = ( )=> {
-    setStartDate(null)
-    setEndDate(null);
-    setStartTime(null);
-    setEndTime(null);
-    setSelectedGender(null);
+class Sidebar extends React.Component{
+  constructor(props) {
+    super(props);
+    this.state = {
+      scenario: null,
+      selectedStartDate: new Date('2020-10-01T00:00:00'),
+      selectedEndDate: new Date('2021-05-01T00:00:00'),
+      gender: "All",
+      isWordOrTag: false,
+    };
   }
-  function valuetext(value) {
-    return `${value}`;
-  }
 
+  sendData = (value) => {
+    this.props.parentCallback(value);
+  };
+
+  handleStartDateChange = (date) => {
+    this.setState({
+      selectedStartDate: date,
+    });
+  };
+
+   handleEndDateChange = (date) => {
+    this.setState({
+      selectedEndDate: date,
+    });
+  };
+
+   handleGenderChange = (event) => {
+    this.setState({
+      gender: event.target.value,
+    });
+  };
+
+  handleScenarioChange = (event) => {
+    this.setState({
+      scenario: event.target.value,
+    });
+    this.sendData(event.target.value)
+  };
+
+  handleSwitchChange = (event) => {
+    this.setState({
+      isWordOrTag: event.target.checked
+    })
+  }
+  render() {
   return (
     <Menu>
       <ButtonGroup fullWidth variant="text" color="primary" aria-label="text primary button group">
@@ -76,18 +113,52 @@ export default function Sidebar() {
       </ButtonGroup>
 
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
-      <Grid container justify="space-around">
+
+      <Grid>
+        {/* scenario selection */}
+        <FormControl component="fieldset">
+          <FormLabel component="legend">Scenario</FormLabel>
+          <RadioGroup aria-label="scenario" name="scenario" value={this.state.scenario} onChange={this.handleScenarioChange}>
+            <FormControlLabel value="Victoria Covid" control={<Radio />} label="Victoria Covid" />
+            <FormControlLabel value="Tweet Heatmap" control={<Radio />} label="Tweet Heatmap" />
+            <FormControlLabel value="Tweet Top words" control={<Radio />} label="Tweet Top Words/Tags" />
+          </RadioGroup>
+        </FormControl>
+      </Grid>
+
+  <Box visibility={this.state.scenario === "Tweet Top words" ? "visible": "hidden"}>
+
+  <Grid component="label" container alignItems="center" spacing={2}>
+          <Grid item >word</Grid>
+          <Grid item>
+            <AntSwitch checked={this.state.isWordOrTag} onChange={this.handleSwitchChange} name="isWordOrTag" />
+          </Grid>
+          <Grid item>tag</Grid>
+        </Grid>
+
+      <Grid container justify="space-around" >
       <KeyboardDatePicker
           disableToolbar
           variant="inline"
           format="MM/dd/yyyy"
           margin="normal"
-          id="date-picker-inline"
+          id="start-date-picker-inline"
           label="Start date"
-          value={selectedStartDate}
-          onChange={handleStartDateChange}
+          maxDate={this.state.selectedEndDate}
+          value={this.state.selectedStartDate}
+          onChange={this.handleStartDateChange}
           KeyboardButtonProps={{
             'aria-label': 'change date',
+          }}
+        />
+        <KeyboardTimePicker
+          margin="normal"
+          id="start-time-picker"
+          label="Start time"
+          value={this.state.selectedStartDate}
+          onChange={this.handleStartDateChange}
+          KeyboardButtonProps={{
+            'aria-label': 'change time',
           }}
         />
         <KeyboardDatePicker
@@ -95,48 +166,47 @@ export default function Sidebar() {
           variant="inline"
           format="MM/dd/yyyy"
           margin="normal"
-          id="date-picker-inline"
+          id="end-date-picker-inline"
           label="End date"
-          value={selectedEndDate}
-          onChange={handleEndDateChange}
+          minDate={this.state.selectedStartDate}
+          value={this.state.selectedEndDate}
+          onChange={this.handleEndDateChange}
           KeyboardButtonProps={{
             'aria-label': 'change date',
           }}
         />
         <KeyboardTimePicker
           margin="normal"
-          id="time-picker"
-          label="Start time"
-          value={selectedStartTime}
-          onChange={handleStartTimeChange}
-          KeyboardButtonProps={{
-            'aria-label': 'change time',
-          }}
-        />
-        <KeyboardTimePicker
-          margin="normal"
-          id="time-picker"
+          id="end-time-picker"
           label="End time"
-          value={selectedEndTime}
-          onChange={handleEndTimeChange}
+          value={this.state.selectedEndDate}
+          onChange={this.handleEndDateChange}
           KeyboardButtonProps={{
             'aria-label': 'change time',
           }}
         />
-         </Grid>
+        </Grid>
 
-
-  <Grid>
-    {/* gender selection */}
-    <FormControl component="fieldset">
-      <FormLabel component="legend">Gender</FormLabel>
-        <RadioGroup aria-label="gender" name="gender1" value={selectedValue} onChange={handleChange}>
-          <FormControlLabel value="all" control={<Radio />} label="All" />
-          <FormControlLabel value="female" control={<Radio />} label="Female" />
-          <FormControlLabel value="male" control={<Radio />} label="Male" />
-      </RadioGroup>
-    </FormControl>
-  </Grid>
+    {/* gender selection
+    <Grid>
+      <FormControl >
+        <InputLabel htmlFor="gender-native-simple">Gender</InputLabel>
+        <Select
+          native
+          value={this.state.gender}
+          onChange={this.handleGenderChange}
+          inputProps={{
+            name: 'gender',
+            id: 'gender-native-simple',
+          }}
+        >
+          <option aria-label="None" value="" />
+          <option value={"All"}>All</option>
+          <option value={"Male"}>Male</option>
+          <option value={"Female"}>Female</option>
+        </Select>
+      </FormControl>
+      </Grid>
 
   <Grid>
     <Typography id="range-slider" gutterBottom>
@@ -144,26 +214,32 @@ export default function Sidebar() {
     </Typography>
     <Slider
       defaultValue={[10, 40]}
-      onChange={handleChange}
+      onChange={this.handleChange}
       valueLabelDisplay="on"
       aria-labelledby="range-slider"
       min={0}
       max={100}
-      getAriaValueText={valuetext}
+      getAriaValueText={this.valuetext}
       marks
     />
-</Grid>
+</Grid> */}
+    <Grid>
+      <Popup trigger={<Button variant="outlined" color="primary">
+        Apply
+      </Button>} modal>
+      <TopWordBarChart 
+        startDate={this.state.selectedStartDate} 
+        endDate={this.state.selectedEndDate}
+        isWordOrTag={this.state.isWordOrTag}/>
+      </Popup>
+    </Grid>
 
-<Grid>
-<Button variant="outlined" color="primary">
-  Apply
-</Button>
-<Button variant="outlined" color="primary"
- onClick={clearFilters}>
-  Clear
-</Button>
-</Grid>
-</MuiPickersUtilsProvider>
+    </Box>
+    </MuiPickersUtilsProvider>
     </Menu>
+
   );
 };
+}
+
+export default Sidebar;

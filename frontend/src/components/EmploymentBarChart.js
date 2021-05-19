@@ -54,7 +54,7 @@ class EmploymentBarChart extends React.Component {
           .then(res => res.json())
           .then(
             (result) => {
-                console.log(result)
+              console.log(result)
               this.setState({
                 isLoaded: true,
                 series: result.series
@@ -65,7 +65,7 @@ class EmploymentBarChart extends React.Component {
                 isLoaded: true,
                 error
               });
-            } )
+            })
           }
 
     render() {

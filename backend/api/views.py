@@ -5,6 +5,7 @@ import json
 from api.toolFunc import *
 import couchdb
 from test import *
+import pandas as pd
 
 # Create your views here.
 print('http://127.0.0.1:8000/api/test/3')
@@ -69,6 +70,37 @@ def get_employment(request):
         e_db = cdb.get_db('employment')
         data = e_db['20f65008d43b65f035c3fc6f4a23ccec']
         resp = data
+        if resp:
+            return HttpResponse(ujson.dumps(resp), content_type='application/json')
+        else:
+            return HttpResponseBadRequest(resp)
+    else:
+        return HttpResponseBadRequest('request should be get')
+
+print('http://127.0.0.1:8000/api/tweet/top/word/5/Jan-01-2020-00:00:00/Dec-31-2020-00:00:00')
+def get_top(request, mode = 'word', n = 20, timeS = None, timeE=None):
+    if request.method == 'GET':
+        cdb = CouchDB()
+        data = cdb.get_db('hotword_50')
+        l = generate_data_key(timeS,timeE)
+        print('here')
+        resp = get_top_word_1(l,data, mode, n)
+        if resp:
+            return HttpResponse(ujson.dumps(resp), content_type='application/json')
+        else:
+            return HttpResponseBadRequest(resp)
+    else:
+        return HttpResponseBadRequest('request should be get')
+
+
+print('http://127.0.0.1:8000/api/cases')
+def get_cases(request):
+    if request.method == 'GET':
+        case = pd.read_csv('./backend/api/data/case.csv')
+        cdb = CouchDB()
+        db = cdb.get_db('australia_location')
+        loc = db.get('d51c8472ae774156665bef107f8e4714')
+        resp = precess_case(case, loc, list(loc.keys()))
         if resp:
             return HttpResponse(ujson.dumps(resp), content_type='application/json')
         else:
