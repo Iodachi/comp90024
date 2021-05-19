@@ -76,7 +76,7 @@ def get_employment(request):
     else:
         return HttpResponseBadRequest('request should be get')
 
-print('http://127.0.0.1:8000/api/tweet/top/word/5/Wed-Jan-01-00:00:00-+0000-2020/Fri-Jan-1-00:00:00-+0000-2021')
+print('http://127.0.0.1:8000/api/tweet/top/word/5/Jan-01-2020-00:00:00/Dec-31-2020-00:00:00')
 def get_top(request, mode = 'word', n = 20, timeS = None, timeE=None):
     if request.method == 'GET':
         cdb = CouchDB()

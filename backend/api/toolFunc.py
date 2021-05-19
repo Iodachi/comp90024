@@ -57,6 +57,10 @@ def get_time(elm):
         date = datetime.strptime(elm, '%Y/%m/%d/%H')
     return date
 
+def get_front_time(time_str):
+    data = datetime.strptime(time_str, '%b-%d-%Y-%H:%M:%S')
+    return data
+
 from collections import Counter
 
 def get_top_word_1(l, data,mode = 'word', n = 20):
@@ -73,19 +77,21 @@ def get_top_word_1(l, data,mode = 'word', n = 20):
     if 'rt' in total:
         total.pop('rt')
     total = dict(sorted(total.items(), key=lambda item: item[1],reverse=True))
-    resp = {'series':[]}
-    c = 0
+    resp = {'series':[{'data':[]}], 'name':[]}
+    c = 1
     if mode == 'word':
         for k, v in total.items():
-            resp['series'].append(make_name_data(k,v))
+            resp['series'][0]['data'].append(v)
+            resp['name'].append(k)
             if c >= n:
                 return resp
             c += 1
     else:
         hash_total = get_all_hashtags(total)
         for k, v in hash_total.items():
-            resp['series'].append(make_name_data(k,v))
-            if c >= n:
+            resp['series'][0]['data'].append(v)
+            resp['name'].append(k)
+            if c > n:
                 return resp
             c += 1
     return resp
@@ -93,8 +99,8 @@ def get_top_word_1(l, data,mode = 'word', n = 20):
 def generate_data_key(start, end):
     l = []
     delta = timedelta(hours=1)
-    start = get_time(start)
-    end =  get_time(end)
+    start = get_front_time(start)
+    end =  get_front_time(end)
     while start < end:
         l.append(start.strftime('%Y/%m/%d/%H'))
         start += delta
