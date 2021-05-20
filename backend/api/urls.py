@@ -7,4 +7,5 @@ urlpatterns = [
     path("api/employment", views.get_employment, name="get_employment"),
     path("api/tweet/top/<str:mode>/<int:n>/<str:timeS>/<str:timeE>", views.get_top, name="get_top"),
     path("api/cases", views.get_cases, name="get_cases"),
+    path("api/language", views.get_lang, name="get_lang"),
 ]

@@ -37,8 +37,8 @@ secure_remote_server = Server('http://admin:admin@172.26.133.210:5984/')
 parser = argparse.ArgumentParser(description='COMP90024 Project Scrape Research Data')
 parser.add_argument('--batch', type=int, default=1000)
 parser.add_argument('--total_forday', type=int, default=80000)
-parser.add_argument('--startkey', type=str, default='[\"melbourne\",2020,12,1]')
-parser.add_argument('--endkey', type=str, default='[\"melbourne\",2020,12,1]')
+parser.add_argument('--startkey', type=str, default='[\"melbourne\",2020,12,10]')
+parser.add_argument('--endkey', type=str, default='[\"melbourne\",2020,12,10]')
 
 args = parser.parse_args()
 # argsparser
@@ -70,7 +70,7 @@ while True:
     print(params['start_key'],params['end_key'])
 
     date = get_time(date_str)
-    if date == datetime(2021,1,1):
+    if date == datetime(2020,12,15):
         break
 
     num = 0
