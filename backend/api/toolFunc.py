@@ -138,7 +138,7 @@ def precess_lang(dataset,rname):
         real_name = wash_lga_name(area, rname)
         if real_name in rname:
             if real_name in resp:
-                lang_name = dataset.loc[index, 'Language Spoken at Home']
+                lang_name = dataset.loc[index, 'Language Spoken at Home'].replace('\"','')
                 if 'total' in lang_name.lower() or 'other' in lang_name.lower():
                     continue
                 if lang_name in resp[real_name]:
@@ -147,7 +147,7 @@ def precess_lang(dataset,rname):
                     resp[real_name][lang_name] = int(dataset.loc[index, 'Value'])
             else:
                 resp[real_name] = {}
-                lang_name = dataset.loc[index, 'Language Spoken at Home']
+                lang_name = dataset.loc[index, 'Language Spoken at Home'].replace('\"','')
                 if 'total' in lang_name or 'other' in lang_name:
                     continue
                 resp[real_name][lang_name] = int(dataset.loc[index, 'Value'])

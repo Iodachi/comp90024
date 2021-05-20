@@ -116,7 +116,7 @@ def get_lang(request):
     if request.method == 'GET':
         cdb = CouchDB()
         db = cdb.get_db('language')
-        resp = db.get('7c78cc675e58cf2a48b4bd909395ae01')
+        resp = db.get('7c78cc675e58cf2a48b4bd9093e153ff')
         resp.pop('_id')
         resp.pop('_rev')
 

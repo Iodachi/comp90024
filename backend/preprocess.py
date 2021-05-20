@@ -118,11 +118,11 @@ a = cdb.create_db('language')
 h_db = cdb.get_db('language')
 resp = get_lang()
 h_db.save(resp)
-
+'''
 a = cdb.create_db('cases')
 h_db = cdb.get_db('cases')
 resp = get_cases()
-h_db.save(resp)
+h_db.save(resp)'''
 
 '''cdb = CouchDB()
 e_db = cdb.get_db('melbourne2020_all')
