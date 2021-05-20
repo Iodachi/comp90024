@@ -139,6 +139,8 @@ def precess_lang(dataset,rname):
         if real_name in rname:
             if real_name in resp:
                 lang_name = dataset.loc[index, 'Language Spoken at Home']
+                if 'total' in lang_name.lower() or 'other' in lang_name.lower():
+                    continue
                 if lang_name in resp[real_name]:
                     resp[real_name][lang_name] += int(dataset.loc[index, 'Value'])
                 else:
@@ -146,6 +148,8 @@ def precess_lang(dataset,rname):
             else:
                 resp[real_name] = {}
                 lang_name = dataset.loc[index, 'Language Spoken at Home']
+                if 'total' in lang_name or 'other' in lang_name:
+                    continue
                 resp[real_name][lang_name] = int(dataset.loc[index, 'Value'])
 
     return resp
