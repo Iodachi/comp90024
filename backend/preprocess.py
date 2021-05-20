@@ -1,9 +1,12 @@
 
 from test import *
+from api.toolFunc import *
 import re
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import TweetTokenizer
+import pandas as pd
+
 def make_name_data(name, data):
     resp = {}
     resp['name'] = name
@@ -87,10 +90,41 @@ def get_topN(table):
 
     return timeline
 
+def get_cases():
+    case = pd.read_csv('./api/data/case.csv')
+    cdb = CouchDB()
+    db = cdb.get_db('australia_location')
+    loc = db.get('f03a9af2e5923e35a8bbb528b1590ac4')
+    resp = precess_case(case, loc, list(loc.keys()))
+    return resp
+
+def get_lang():
+    dataset = pd.read_csv('./api/data/language_spoken_at_home.csv')
+    f = open('./api/data/vic_geo.json','r')
+    vic_loc = json.load(f)
+    vic_real_name = []
+    for i in vic_loc['features']:
+        vic_real_name.append(i['properties']['vic_lga__3'])
+    f.close()
+    resp = precess_lang(dataset, vic_real_name)
+
+    return resp
 
 import json
 from datetime import timedelta
+
 cdb = CouchDB()
+a = cdb.create_db('language')
+h_db = cdb.get_db('language')
+resp = get_lang()
+h_db.save(resp)
+
+a = cdb.create_db('cases')
+h_db = cdb.get_db('cases')
+resp = get_cases()
+h_db.save(resp)
+
+'''cdb = CouchDB()
 e_db = cdb.get_db('melbourne2020_all')
 a = cdb.create_db('hotword_50')
 h_db = cdb.get_db('hotword_50')
@@ -103,14 +137,5 @@ for k,v in timeline.items():
     print(k)
     print(len(list(v.keys())))
     h_db[k] = v
+'''
 
-'''{
-            "name": "Python: Django",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/backend/manage.py",
-            "args": [
-                "runserver"
-            ],
-            "django": true
-        }'''

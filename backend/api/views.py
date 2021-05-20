@@ -96,11 +96,11 @@ def get_top(request, mode = 'word', n = 20, timeS = None, timeE=None):
 print('http://127.0.0.1:8000/api/cases')
 def get_cases(request):
     if request.method == 'GET':
-        case = pd.read_csv('./backend/api/data/case.csv')
         cdb = CouchDB()
-        db = cdb.get_db('australia_location')
-        loc = db.get('f03a9af2e5923e35a8bbb528b1590ac4')
-        resp = precess_case(case, loc, list(loc.keys()))
+        db = cdb.get_db('cases')
+        resp = db.get('dc03849c597d859fe1dbe170262687d0')
+        resp.pop('_id')
+        resp.pop('_rev')
         with open('geo.json','w') as ff:
             json.dump(resp, ff)
         if resp:
@@ -114,15 +114,11 @@ def get_cases(request):
 print('http://127.0.0.1:8000/api/language')
 def get_lang(request):
     if request.method == 'GET':
-        dataset = pd.read_csv('./backend/api/data/language_spoken_at_home.csv')
-        f = open('./backend/api/data/vic_geo.json','r')
-        vic_loc = json.load(f)
-        vic_real_name = []
-        for i in vic_loc['features']:
-            vic_real_name.append(i['properties']['vic_lga__3'])
-        f.close()
-        resp = precess_lang(dataset, vic_real_name)
-
+        cdb = CouchDB()
+        db = cdb.get_db('language')
+        resp = db.get('dc03849c597d859fe1dbe1702618490d')
+        resp.pop('_id')
+        resp.pop('_rev')
         if resp:
             return HttpResponse(json.dumps(resp), content_type='application/json')
         else:
