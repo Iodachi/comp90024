@@ -10,32 +10,57 @@ import {
   KeyboardTimePicker,
 } from '@material-ui/pickers';
 
-import { Button, ButtonGroup } from '@material-ui/core'
+import { Button, ButtonGroup, Box, Switch, FormControl, FormLabel, FormControlLabel, Radio, RadioGroup} from '@material-ui/core'
 import 'date-fns';
-
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
-
-import Typography from '@material-ui/core/Typography';
-import Slider from '@material-ui/core/Slider';
+import Popup from 'reactjs-popup';
 
 import history from '../history'
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
+import TopWordBarChart from './TopWordBarChart';
+import { withStyles } from '@material-ui/core/styles';
+
+const AntSwitch = withStyles((theme) => ({
+  root: {
+    width: 28,
+    height: 16,
+    padding: 0,
+    display: 'flex',
+  },
+  switchBase: {
+    padding: 2,
+    color: theme.palette.grey[500],
+    '&$checked': {
+      transform: 'translateX(12px)',
+      color: theme.palette.common.white,
+      '& + $track': {
+        opacity: 1,
+        backgroundColor: theme.palette.primary.main,
+        borderColor: theme.palette.primary.main,
+      },
+    },
+  },
+  thumb: {
+    width: 12,
+    height: 12,
+    boxShadow: 'none',
+  },
+  track: {
+    border: `1px solid ${theme.palette.grey[500]}`,
+    borderRadius: 16 / 2,
+    opacity: 1,
+    backgroundColor: theme.palette.common.white,
+  },
+  checked: {},
+}))(Switch);
 
 class Sidebar extends React.Component{
   constructor(props) {
     super(props);
     this.state = {
       scenario: null,
-      selectedStartDate: null,
-      selectedStartTime: null,
-      selectedEndDate: null,
-      selectedEndTime: null,
+      selectedStartDate: new Date('2020-10-01T00:00:00'),
+      selectedEndDate: new Date('2021-05-01T00:00:00'),
       gender: "All",
+      isWordOrTag: false,
     };
   }
 
@@ -55,18 +80,6 @@ class Sidebar extends React.Component{
     });
   };
 
-   handleStartTimeChange = (time) => {
-    this.setState({
-      selectedStartTime: time,
-    });
-  };
-
-   handleEndTimeChange = (time) => {
-    this.setState({
-      selectedEndTime: time,
-    });
-  };
-
    handleGenderChange = (event) => {
     this.setState({
       gender: event.target.value,
@@ -80,20 +93,11 @@ class Sidebar extends React.Component{
     this.sendData(event.target.value)
   };
 
-  // const handleChange = (event) => {
-
-  // }
-
-   clearFilters = ()=> {
-     this.setState({
-      selectedStartDate: null,
-      selectedStartTime: null,
-      selectedEndDate: null,
-      selectedEndTime: null,
-      gender: null
-     })
+  handleSwitchChange = (event) => {
+    this.setState({
+      isWordOrTag: event.target.checked
+    })
   }
-
   render() {
   return (
     <Menu>
@@ -117,22 +121,44 @@ class Sidebar extends React.Component{
           <RadioGroup aria-label="scenario" name="scenario" value={this.state.scenario} onChange={this.handleScenarioChange}>
             <FormControlLabel value="Victoria Covid" control={<Radio />} label="Victoria Covid" />
             <FormControlLabel value="Tweet Heatmap" control={<Radio />} label="Tweet Heatmap" />
+            <FormControlLabel value="Tweet Top words" control={<Radio />} label="Tweet Top Words/Tags" />
           </RadioGroup>
         </FormControl>
       </Grid>
 
-      <Grid container justify="space-around">
+  <Box visibility={this.state.scenario === "Tweet Top words" ? "visible": "hidden"}>
+
+  <Grid component="label" container alignItems="center" spacing={2}>
+          <Grid item >word</Grid>
+          <Grid item>
+            <AntSwitch checked={this.state.isWordOrTag} onChange={this.handleSwitchChange} name="isWordOrTag" />
+          </Grid>
+          <Grid item>tag</Grid>
+        </Grid>
+
+      <Grid container justify="space-around" >
       <KeyboardDatePicker
           disableToolbar
           variant="inline"
           format="MM/dd/yyyy"
           margin="normal"
-          id="date-picker-inline"
+          id="start-date-picker-inline"
           label="Start date"
+          maxDate={this.state.selectedEndDate}
           value={this.state.selectedStartDate}
           onChange={this.handleStartDateChange}
           KeyboardButtonProps={{
             'aria-label': 'change date',
+          }}
+        />
+        <KeyboardTimePicker
+          margin="normal"
+          id="start-time-picker"
+          label="Start time"
+          value={this.state.selectedStartDate}
+          onChange={this.handleStartDateChange}
+          KeyboardButtonProps={{
+            'aria-label': 'change time',
           }}
         />
         <KeyboardDatePicker
@@ -140,8 +166,9 @@ class Sidebar extends React.Component{
           variant="inline"
           format="MM/dd/yyyy"
           margin="normal"
-          id="date-picker-inline"
+          id="end-date-picker-inline"
           label="End date"
+          minDate={this.state.selectedStartDate}
           value={this.state.selectedEndDate}
           onChange={this.handleEndDateChange}
           KeyboardButtonProps={{
@@ -150,26 +177,18 @@ class Sidebar extends React.Component{
         />
         <KeyboardTimePicker
           margin="normal"
-          id="time-picker"
-          label="Start time"
-          value={this.state.selectedStartTime}
-          onChange={this.handleStartTimeChange}
-          KeyboardButtonProps={{
-            'aria-label': 'change time',
-          }}
-        />
-        <KeyboardTimePicker
-          margin="normal"
-          id="time-picker"
+          id="end-time-picker"
           label="End time"
-          value={this.state.selectedEndTime}
-          onChange={this.handleEndTimeChange}
+          value={this.state.selectedEndDate}
+          onChange={this.handleEndDateChange}
           KeyboardButtonProps={{
             'aria-label': 'change time',
           }}
         />
+        </Grid>
 
-    {/* gender selection */}
+    {/* gender selection
+    <Grid>
       <FormControl >
         <InputLabel htmlFor="gender-native-simple">Gender</InputLabel>
         <Select
@@ -203,19 +222,22 @@ class Sidebar extends React.Component{
       getAriaValueText={this.valuetext}
       marks
     />
-</Grid>
+</Grid> */}
+    <Grid>
+      <Popup trigger={<Button variant="outlined" color="primary">
+        Apply
+      </Button>} modal>
+      <TopWordBarChart 
+        startDate={this.state.selectedStartDate} 
+        endDate={this.state.selectedEndDate}
+        isWordOrTag={this.state.isWordOrTag}/>
+      </Popup>
+    </Grid>
 
-<Grid>
-<Button variant="outlined" color="primary">
-  Apply
-</Button>
-<Button variant="outlined" color="primary"
- onClick={this.clearFilters}>
-  Clear
-</Button>
-</Grid>
-</MuiPickersUtilsProvider>
+    </Box>
+    </MuiPickersUtilsProvider>
     </Menu>
+
   );
 };
 }

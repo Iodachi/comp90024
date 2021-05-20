@@ -1,12 +1,13 @@
 import React from 'react'
 import Chart from 'react-apexcharts'
+import './TopWordBarChart.css'
 
-class EmploymentBarChart extends React.Component {
+class TopWordBarChart extends React.Component {
     constructor(props) {
       super(props);
 
       this.state = {
-        series: [],
+        series:  [],
         options: {
           chart: {
             type: 'bar',
@@ -14,7 +15,7 @@ class EmploymentBarChart extends React.Component {
           },
           plotOptions: {
             bar: {
-              horizontal: true,
+              horizontal: false,
             },
           },
           stroke: {
@@ -22,13 +23,13 @@ class EmploymentBarChart extends React.Component {
             colors: ['#fff']
           },
           title: {
-            text: 'Provisional Mortality Statistics 2020'
+            text: 'Tweet Top Words/Tags'
           },
           noData: {
             text: 'Loading...'
           },
           xaxis: {
-            categories: ['2016', '2019', '2020'],
+            categories: [],
           },
           yaxis: {
             title: {
@@ -48,25 +49,32 @@ class EmploymentBarChart extends React.Component {
       
       };
     }
-
-    componentDidMount() {
-        fetch("http://127.0.0.1:8000/api/employment")
-          .then(res => res.json())
-          .then(
-            (result) => {
-              console.log(result)
-              this.setState({
-                isLoaded: true,
-                series: result.series
-              });
-            },
-            (error) => {
-              this.setState({
-                isLoaded: true,
-                error
-              });
-            })
-          }
+    componentDidMount(){
+        const startDate = String(this.props.startDate).slice(4, 24).replaceAll(' ', '-')
+        const endDate = String(this.props.endDate).slice(4, 24).replaceAll(' ', '-')
+        const isWordOrTag = this.props.isWordOrTag ? 'tag' : 'word'
+        fetch(`http://127.0.0.1:8000/api/tweet/top/${isWordOrTag}/10/${startDate}/${endDate}`)
+    .then(res => res.json())
+    .then(
+      (result) => {
+        this.setState({
+          series: result.series,
+          options: {
+            ...this.state.options,
+            xaxis: {
+              ...this.state.options.xaxis, 
+                categories: result.name
+              }
+            }
+        })
+      },
+      (error) => {
+        this.setState({
+            isLoaded: true,
+            error
+          });
+      })
+    }
 
     render() {
       return (
@@ -85,4 +93,4 @@ class EmploymentBarChart extends React.Component {
       );
     }
   }
-export default EmploymentBarChart;
+export default TopWordBarChart;
