@@ -1,0 +1,56 @@
+
+---
+# Clone source code repository
+- name: Clone the code repository into home directory
+  git:
+    repo: "https://github.com/Iodachi/comp90024.git"
+    dest: /home/ubuntu/comp90024
+  environment: "{{ proxy_env }}"
+  become: true
+
+# Create Docker config directory
+- name: Make sure that Docker config directory exists
+  become: yes
+  file:
+    path: '~/.docker'
+    state: 'directory'
+
+# Set Docker proxy for University of Melbourne Research Cloud
+- name: Ensure Docker client proxy settings are present on the server
+  become: yes
+  copy:
+    content: "{{ docker_proxy_settings }}"
+    dest: ~/.docker/config.json
+
+# #Build Docker image for tweet harvester
+# - name: Build an image and push it to local repo
+#   docker_image:
+#     state: present
+#     build:
+#       path: '/home/ubuntu/comp90024/crawler/get_fromMRC'
+#       pull: yes
+#     name: crawler/myscript
+#     tag: latest
+#     source: build
+#   become: yes
+#   environment: "{{ proxy_env }}"
+
+# # Build Docker image for web frontend
+# - name: Configure compose
+#   become: yes
+#   template:
+#     src: "{{ playbook_dir }}/../web/docker-compose.yaml.j2"
+#     dest: "~/cluster-and-cloud-computing-assignment-2/web/docker-compose.yaml"
+#     owner: "{{ ansible_user }}"
+#     group: "{{ ansible_user }}"
+
+# # Run Docker compose to activate web frontend and web backend
+# - name: Run docker compose
+#   become: yes
+#   docker_compose:
+#     project_src: "~/cluster-and-cloud-computing-assignment-2/web/"
+#     pull: false
+#     build: yes
+#     state: present
+#     remove_orphans: no
+#     recreate: always

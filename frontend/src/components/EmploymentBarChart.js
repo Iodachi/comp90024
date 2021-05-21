@@ -22,7 +22,7 @@ class EmploymentBarChart extends React.Component {
             colors: ['#fff']
           },
           title: {
-            text: 'Provisional Mortality Statistics 2020'
+            text: 'Melbourne Employment'
           },
           noData: {
             text: 'Loading...'

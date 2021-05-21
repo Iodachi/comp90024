@@ -17,7 +17,8 @@ class App extends React.Component{
 
   callbackFunction = (childData) => {
     this.setState({
-      scenario: childData
+      scenario: childData.scenario,
+      language: childData.language,
     })
   };
 
@@ -27,7 +28,7 @@ class App extends React.Component{
       <Sidebar parentCallback = {this.callbackFunction}/>
       <Router history={history}>
                 <Switch>
-                    <Route path="/" exact render={(props) => <Home globalStore={{scenario: this.state.scenario}} {...props} /> } />
+                    <Route path="/" exact render={(props) => <Home globalStore={{scenario: this.state.scenario, language: this.state.language}} {...props} /> } />
                     <Route path="/Analysis" component={Analysis} />
                 </Switch>
             </Router>

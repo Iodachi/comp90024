@@ -10,13 +10,45 @@ import {
   KeyboardTimePicker,
 } from '@material-ui/pickers';
 
-import { Button, ButtonGroup, Box, Switch, FormControl, FormLabel, FormControlLabel, Radio, RadioGroup} from '@material-ui/core'
+import { Button, ButtonGroup, Box, Switch, FormControl, FormLabel, FormControlLabel, Radio, RadioGroup, InputLabel, Select, MenuItem} from '@material-ui/core'
 import 'date-fns';
 import Popup from 'reactjs-popup';
 
 import history from '../history'
 import TopWordBarChart from './TopWordBarChart';
 import { withStyles } from '@material-ui/core/styles';
+
+// const language_dictionary = {
+//   "Arabic": "ar",
+//   "Danish": "da",
+//   "German": "de",
+//   "English": "en",
+//   "Spanish": "es",
+//   "Estonian": "et",
+//   "Finnish": "fi",
+//   "French": "fr",
+//   "Hindi": "hi",
+// "Hungarian": "hu",
+// "Indonesian": "in",
+// "Icelandic": "is",
+// "Italian": "it",
+// "Japanese": "ja",
+// "Korean": "ko",
+// "Lithuanian": "lt",
+// "Latvian": "lv",
+// "Dutch": "nl",
+// "Norwegian": "no",
+// "Polish": "pl",
+// "Portuguese": "pt",
+// "Russian": "ru",
+// "Slovenian": "sl",
+// "Swedish": "sv",
+// "Thai": "th",
+// "Tagalog": "tl",
+// "Turkish": "tr",
+// "Vietnamese": "vi",
+// "Chinese": "zh",
+// }
 
 const AntSwitch = withStyles((theme) => ({
   root: {
@@ -59,8 +91,8 @@ class Sidebar extends React.Component{
       scenario: null,
       selectedStartDate: new Date('2020-10-01T00:00:00'),
       selectedEndDate: new Date('2021-05-01T00:00:00'),
-      gender: "All",
       isWordOrTag: false,
+      language: "ar",
     };
   }
 
@@ -80,17 +112,13 @@ class Sidebar extends React.Component{
     });
   };
 
-   handleGenderChange = (event) => {
-    this.setState({
-      gender: event.target.value,
-    });
-  };
-
   handleScenarioChange = (event) => {
     this.setState({
       scenario: event.target.value,
     });
-    this.sendData(event.target.value)
+    this.sendData({
+      scenario: event.target.value,
+      language: this.state.language})
   };
 
   handleSwitchChange = (event) => {
@@ -98,6 +126,17 @@ class Sidebar extends React.Component{
       isWordOrTag: event.target.checked
     })
   }
+
+  handleLanguageChange =( event) => {
+    this.setState({
+      language: event.target.value,
+    });
+    this.sendData({
+      scenario: this.state.scenario,
+      language:event.target.value
+    })
+  }
+
   render() {
   return (
     <Menu>
@@ -126,6 +165,54 @@ class Sidebar extends React.Component{
           </RadioGroup>
         </FormControl>
       </Grid>
+
+
+      <Box visibility={this.state.scenario === "Languages" ? "visible": "hidden"}>
+      <Grid>
+      <FormControl>
+        <Select
+          labelId="language-native-simple"
+          id="language-simple-select"
+          value={this.state.language}
+          onChange={this.handleLanguageChange}
+        >
+          {/* this is not working...
+          {language_dictionary.map(((item) => (
+            <MenuItem value={item.value}>{item.key}</MenuItem>
+          )))} */}
+          <MenuItem value={"ar"}>Arabic</MenuItem>
+          <MenuItem value={"da"}>Danish</MenuItem>
+          <MenuItem value={"de"}>German</MenuItem>
+          <MenuItem value={"en"}>English</MenuItem>
+          <MenuItem value={"es"}>Spanish</MenuItem>
+          <MenuItem value={"et"}>Estonian</MenuItem>
+          <MenuItem value={"fi"}>Finnish</MenuItem>
+          <MenuItem value={"fr"}>French</MenuItem>
+          <MenuItem value={"hi"}>Hindi</MenuItem>
+          <MenuItem value={"hu"}>Hungarian</MenuItem>
+          <MenuItem value={"in"}>Indonesian</MenuItem>
+          <MenuItem value={"is"}>Icelandic</MenuItem>
+          <MenuItem value={"it"}>Italian</MenuItem>
+          <MenuItem value={"ja"}>Japanese</MenuItem>
+          <MenuItem value={"ko"}>Korean</MenuItem>
+          <MenuItem value={"lt"}>Lithuanian</MenuItem>
+          <MenuItem value={"lv"}>Latvian</MenuItem>
+          <MenuItem value={"nl"}>Dutch</MenuItem>
+          <MenuItem value={"no"}>Norwegian</MenuItem>
+          <MenuItem value={"pl"}>Polish</MenuItem>
+          <MenuItem value={"pt"}>Portuguese</MenuItem>
+          <MenuItem value={"ru"}>Russian</MenuItem>
+          <MenuItem value={"sl"}>Slovenian</MenuItem>
+          <MenuItem value={"sv"}>Swedish</MenuItem>
+          <MenuItem value={"th"}>Thai</MenuItem>
+          <MenuItem value={"tl"}>Tagalog</MenuItem>
+          <MenuItem value={"tr"}>Turkish</MenuItem>
+          <MenuItem value={"vi"}>Vietnamese</MenuItem>
+          <MenuItem value={"zh"}>Chinese</MenuItem>
+        </Select>
+      </FormControl>
+      </Grid>
+      </Box>
 
   <Box visibility={this.state.scenario === "Tweet Top words" ? "visible": "hidden"}>
 
@@ -188,42 +275,6 @@ class Sidebar extends React.Component{
         />
         </Grid>
 
-    {/* gender selection
-    <Grid>
-      <FormControl >
-        <InputLabel htmlFor="gender-native-simple">Gender</InputLabel>
-        <Select
-          native
-          value={this.state.gender}
-          onChange={this.handleGenderChange}
-          inputProps={{
-            name: 'gender',
-            id: 'gender-native-simple',
-          }}
-        >
-          <option aria-label="None" value="" />
-          <option value={"All"}>All</option>
-          <option value={"Male"}>Male</option>
-          <option value={"Female"}>Female</option>
-        </Select>
-      </FormControl>
-      </Grid>
-
-  <Grid>
-    <Typography id="range-slider" gutterBottom>
-      Age range
-    </Typography>
-    <Slider
-      defaultValue={[10, 40]}
-      onChange={this.handleChange}
-      valueLabelDisplay="on"
-      aria-labelledby="range-slider"
-      min={0}
-      max={100}
-      getAriaValueText={this.valuetext}
-      marks
-    />
-</Grid> */}
     <Grid>
       <Popup trigger={<Button variant="outlined" color="primary">
         Apply
