@@ -126,3 +126,20 @@ def get_lang(request):
             return HttpResponseBadRequest(resp)
     else:
         return HttpResponseBadRequest('request should be get')
+
+
+print('http://127.0.0.1:8000/api/area/info')
+def get_areaInfo(request):
+    if request.method == 'GET':
+        cdb = CouchDB()
+        db = cdb.get_db('area_rent_income_crime')
+        resp = db.get('bdb85cf015fe7fe55ca28dd28cd3f2f4')
+        resp.pop('_id')
+        resp.pop('_rev')
+
+        if resp:
+            return HttpResponse(json.dumps(resp), content_type='application/json')
+        else:
+            return HttpResponseBadRequest(resp)
+    else:
+        return HttpResponseBadRequest('request should be get')
