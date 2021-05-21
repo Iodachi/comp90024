@@ -109,6 +109,7 @@ def generate_data_key(start, end):
 
 def wash_lga_name(lga_name, real_name):
     dif_len, a_len, b_len = 0,0,0
+    lga_name = lga_name.replace('-',' ')
     result_name = '_'
     for name in real_name:
         if name.lower() in lga_name.lower():
@@ -128,24 +129,38 @@ def wash_lga_name(lga_name, real_name):
     else:
         return result_name
 
+from tqdm import tqdm
+def precess_lang(dataset,rname):
+    resp = {}
 
-def process_lang(dataset):
-    resp = {'series':[]}
-    d = {}
-    lang = {}
-    for index in range(len(dataset)):
-        area = dataset.loc(index, 'LGA 2011')
-        if area in d:
-            language = dataset.loc(index, 'Language Spoken at Home')
-            if language in lang:
-                lang[language] += dataset.loc(index, 'Value')
+    for index in tqdm(range(len(dataset))):
+        area = dataset.loc[index, 'LGA 2011']
+        real_name = wash_lga_name(area, rname)
+        if real_name in rname:
+            if real_name in resp:
+                lang_name = dataset.loc[index, 'Language Spoken at Home'].replace('\"','')
+                if 'total' in lang_name.lower() or 'other' in lang_name.lower():
+                    continue
+                if lang_name in resp[real_name]:
+                    resp[real_name][lang_name] += int(dataset.loc[index, 'Value'])
+                else:
+                    resp[real_name][lang_name] = int(dataset.loc[index, 'Value'])
+            else:
+                resp[real_name] = {}
+                lang_name = dataset.loc[index, 'Language Spoken at Home'].replace('\"','')
+                if 'total' in lang_name or 'other' in lang_name:
+                    continue
+                resp[real_name][lang_name] = int(dataset.loc[index, 'Value'])
 
-            return
+    return resp
+        
 
 
 def make_geo(loc):
+    a = loc.copy()
+    a.reverse()
     di = {"type":"Feature","properties":{},"geometry": { "type": "Point"} }
-    di["geometry"]["coordinates"] = loc
+    di["geometry"]["coordinates"] = a
     return di
 
 
