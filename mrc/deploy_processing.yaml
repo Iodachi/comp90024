@@ -7,4 +7,4 @@
     - role: nodes-common
     - role: nodes-docker-install
     - role: nodes-volume-mount
-    - role:   
+    - role: frontend-setup

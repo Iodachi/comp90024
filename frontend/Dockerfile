@@ -1,5 +1,7 @@
 FROM node:13.12.0-alpine
 
+
+RUN npm config set https-proxy http://wwwproxy.unimelb.edu.au:8000
 # set working directory
 WORKDIR /app
 
