@@ -183,18 +183,28 @@ def random_float(low, high):
 
 def precess_au_heatmap(view):
     resp = {"type": "FeatureCollection","features": []}
-    for v in view:
-        if v[0]:
-            cord = v[0].copy().reverse()
-        if v[1]:
-            cord = v[0].copy().reverse()
+    for k in view:
+        v = k.key
         if v[2]:
             if len(v[2][0]) == 4:
                 x = random_float(v[2][0][0][0], v[2][2][0][0])
                 y = random_float(v[2][0][0][1], v[2][2][0][1])
-                cord = [x,y]
+                cord = [y,x]
+        if v[0]:
+            cord = v[0].copy()
+        if v[1]:
+            cord = v[0].copy()
+        
         geo = make_geo(cord)
         resp['features'].append(geo)
     return resp
 
+def process_lang_heatmap(view):
+    resp = {"type": "FeatureCollection","features": []}
+    for v in view:
+        cord = v.value.copy()
+        cord.reverse()
+        geo = make_geo(cord)
+        resp['features'].append(geo)
+    return resp
 

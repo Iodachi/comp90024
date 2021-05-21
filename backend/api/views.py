@@ -149,7 +149,25 @@ def get_areaAge(request):
     if request.method == 'GET':
         cdb = CouchDB()
         db = cdb.get_db('area_age')
-        resp = db.get('b06e5a782861b6d000a6a41504f8e830')
+        resp = db.get('age_15')
+        resp.pop('_id')
+        resp.pop('_rev')
+
+        if resp:
+            return HttpResponse(json.dumps(resp), content_type='application/json')
+        else:
+            return HttpResponseBadRequest(resp)
+    else:
+        return HttpResponseBadRequest('request should be get')
+
+print('http://127.0.0.1:8000/api/language/heatmap/en')
+def get_langHeat(request, lang):
+    if request.method == 'GET':
+        cdb = CouchDB()
+        db = cdb.get_db('heatmap_lang')
+        if lang not in db:
+            return HttpResponseBadRequest('language not exist')
+        resp = db.get(lang)
         resp.pop('_id')
         resp.pop('_rev')
 
