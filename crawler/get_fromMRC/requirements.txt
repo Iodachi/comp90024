@@ -2,5 +2,4 @@ couchdb
 requests
 argparse
 time
-couchdb
 datetime
