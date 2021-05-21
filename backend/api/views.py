@@ -117,8 +117,8 @@ def get_lang(request):
         cdb = CouchDB()
         db = cdb.get_db('language')
         resp = db.get('7c78cc675e58cf2a48b4bd9093e153ff')
-        resp.pop('_id')
-        resp.pop('_rev')
+        resp = stella(resp)
+        
 
         if resp:
             return HttpResponse(json.dumps(resp), content_type='application/json')
