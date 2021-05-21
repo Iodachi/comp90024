@@ -35,9 +35,9 @@
 - name: Build an image and push it to local repo
   docker_image:
     build:
-      path: '/home/ubuntu/comp90024/crawler/get_fromMRC'
+      path: '~/comp90024/crawler/get_fromMRC'
       pull: yes
-    name: comp90024/crawler/get_fromMRC
+    name: crawler/get_fromMRC
     tag: latest
     source: build
     force: yes

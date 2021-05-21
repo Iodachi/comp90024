@@ -203,7 +203,7 @@ def save_area_rent_income_crime():
 def save_au_heat():
     cdb = CouchDB()
     au_db = cdb.get_db('has_location_try')
-    table = au_db.iterview('_design/dictionary/_view/textdate',3000)
+    table = au_db.iterview('_design/dictionary/_view/geo',3000)
     resp = {}
     resp = precess_au_heatmap(table)
     ic_db = cdb.create_db('au_heatmap')
@@ -230,15 +230,6 @@ def save_area_age():
     resp = {}
     for i in range(len(age)):
         area = age.loc[i, ' lga_name']
-        precent = age.loc[i, [  ' _0_4_yrs_proj_percent',' _5_9_yrs_proj_percent', 
-                                ' _10_14_yrs_proj_percent',' _15_19_yrs_proj_percent', 
-                                ' _20_24_yrs_proj_percent',' _25_29_yrs_proj_percent',
-                                ' _30_34_yrs_proj_percent', ' _35_39_yrs_proj_percent',
-                                ' _40_44_yrs_proj_percent', ' _45_49_yrs_proj_percent',
-                                ' _50_54_yrs_proj_percent', ' _55_59_yrs_proj_percent',
-                                ' _60_64_yrs_proj_percent',' _65_69_yrs_proj_percent',
-                                ' _70_74_yrs_proj_percent',' _75_79_yrs_proj_percent',
-                                ' _80_84_yrs_proj_percent',' _85_yrs_over_proj_percent']]
         pop = age.loc[i, [        ' _0_4_yrs_proj_count',   ' _5_9_yrs_proj_count', 
                                 ' _10_14_yrs_proj_count', ' _15_19_yrs_proj_count', 
                                 ' _20_24_yrs_proj_count', ' _25_29_yrs_proj_count',
@@ -253,18 +244,21 @@ def save_area_age():
 
         if area_name in loc:
             resp[area_name] = {}
-            resp[area_name]['Count'] = {}
-            resp[area_name]['Percent'] = {}
-            for i in range(len(pop)):
-                resp[area_name]['Count'][aa[i]] = int(pop[i])
-                resp[area_name]['Percent'][aa[i]] = float(precent[i])
+            resp[area_name]['data'] = {}
+            ge = []
+            for i in pop:
+                ge.append(int(i))
+            resp[area_name]['data']['count'] = ge
+            resp[area_name]['data']['labels'] = aa
+
 
     cdb = CouchDB()
     ric_db = cdb.create_db('area_age')
     ric_db = cdb.get_db('area_age')
 
-    ric_db.save(resp)
+    ric_db['age'] = resp
     return resp
+
 
 '''
 cdb = CouchDB()
@@ -294,3 +288,22 @@ for k,v in timeline.items():
 
 
 #resp = save_area_age()
+
+
+
+def save_lang_heat():
+    cdb = CouchDB()
+    au_db = cdb.get_db('melbourne2016')
+    rtable = au_db.view('_design/dictionary/_view/reducelanguage',group = True)
+    big_resp = {}
+    for lang in rtable:
+        table = au_db.view('_design/dictionary/_view/language', key = lang.key)
+        resp = process_lang_heatmap(table)
+        big_resp[lang.key] = resp
+    s_db = cdb.create_db('heatmap_lang')
+    s_db = cdb.get_db('heatmap_lang')
+    for k,v in big_resp.items():
+        print(k)
+        s_db[k] = v
+    return big_resp
+

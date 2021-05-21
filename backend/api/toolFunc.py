@@ -197,4 +197,12 @@ def precess_au_heatmap(view):
         resp['features'].append(geo)
     return resp
 
+def process_lang_heatmap(view):
+    resp = {"type": "FeatureCollection","features": []}
+    for v in view:
+        cord = v.value.copy()
+        cord.reverse()
+        geo = make_geo(cord)
+        resp['features'].append(geo)
+    return resp
 
