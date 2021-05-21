@@ -1,13 +1,4 @@
-#
-# Part of Assignment 2 - COMP90024 course at The University of Melbourne 
-#
-# Cluster and Cloud Computing - Team 24 
-# 
-# Authors: 
-#
-#
-# Location: Melbourne
-#
+
 ---
 # Clone source code repository
 - name: Clone the code repository into home directory
@@ -44,21 +35,22 @@
   become: yes
   environment: "{{ proxy_env }}"
 
-# Stop existing Docker containers for Twitter Harvesters and remove them (if any)
-- name: Stop Twitter Harvester Docker container
+# Build Docker image for web frontend
+- name: Configure compose
   become: yes
-  docker_container:
-    name: crawler/getfrommrc
-    state: absent
+  template:
+    src: "{{ playbook_dir }}/../web/docker-compose.yaml.j2"
+    dest: "~/cluster-and-cloud-computing-assignment-2/web/docker-compose.yaml"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
 
-
-
-# # Create new docker container for Twitter Harvester and start container
-# - name: Create and start Twitter Harvester Docker container
-#   become: yes
-#   docker_container:
-#     name: crawler/getfrommrc
-#     image: crawler/myscript
-#     state: started
-#     pull: false
-#     recreate: true
+# Run Docker compose to activate web frontend and web backend
+- name: Run docker compose
+  become: yes
+  docker_compose:
+    project_src: "~/cluster-and-cloud-computing-assignment-2/web/"
+    pull: false
+    build: yes
+    state: present
+    remove_orphans: no
+    recreate: always
