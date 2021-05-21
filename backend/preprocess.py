@@ -102,6 +102,7 @@ def get_lang():
     dataset = pd.read_csv('./api/data/language_spoken_at_home.csv')
     f = open('./api/data/vic_geo.json','r')
     vic_loc = json.load(f)
+    f.close()
     vic_real_name = []
     for i in vic_loc['features']:
         vic_real_name.append(i['properties']['vic_lga__3'])
@@ -110,32 +111,109 @@ def get_lang():
 
     return resp
 
+
+def save_area_rent_income_crime():
+    crime = pd.read_csv('./api/data/crime.csv').fillna(0)
+    income = pd.read_csv('./api/data/income.csv').fillna(0)
+    rent = pd.read_csv('./api/data/rent.csv').fillna(0)
+
+    f = open('./api/data/vic_geo.json','r')
+    vic = json.load(f)
+    f.close()
+    loc = []
+    for i in vic['features']:
+        loc.append(i['properties']['vic_lga__3'])
+    resp = {}
+    for i in range(len(rent)):
+        area = rent.loc[i, ' lga_name16']
+        value = rent.loc[i, ' median_sep_2017']
+        area_name = wash_lga_name(area,loc)
+        if area_name in loc:
+            if area_name in resp:
+                resp[area_name]['rent'] = int(value)
+            else:
+                resp[area_name] = {}
+                if 'a' not in str(value):
+                    resp[area_name]['rent'] = int(value)
+                else:
+                    resp[area_name]['rent'] = value
+
+    for i in range(len(income)):
+        area = income.loc[i, ' lga_name16']
+        mean = income.loc[i, ' mean_aud_2014_15']
+        median = income.loc[i, 'median_aud_2014_15']
+        area_name = wash_lga_name(area, loc)
+        if area_name in loc:
+            if area_name in resp:
+                resp[area_name]['income'] = {}
+                resp[area_name]['income']['mean'] = int(mean)
+                resp[area_name]['income']['median'] = int(median)
+            else:
+                resp[area_name] = {}
+                resp[area_name]['income'] = {}
+                resp[area_name]['income']['mean'] = int(mean)
+                resp[area_name]['income']['median'] = int(median)
+
+    crime_name = ['Against the person','Property and deception', 'Drug offences', 'Public order and security', 'Justice procedures', 'Other offences']
+    for i in range(len(crime)):
+        area = crime.loc[i, 'lga_name11']
+        value = crime.loc[i, [' total_division_a_offences',' total_division_b_offences',' total_division_c_offences',' total_division_d_offences',' total_division_e_offences',' total_division_f_offences']]
+        area_name = wash_lga_name(area, loc)
+        if area_name in loc:
+            if area_name in resp:
+                resp[area_name]['crime'] = {}
+                for c in range(6):
+                    resp[area_name]['crime'][crime_name[c]] = int(value[c])
+            else:
+                resp[area_name] = {}
+                resp[area_name]['crime'] = {}
+                for c in range(6):
+                    resp[area_name]['crime'][crime_name[c]] = int(value[c])
+
+    for k,v in resp.items():
+        if 'rent' not in v:
+            v['rent'] = None
+        if 'income' not in v:
+            v['income'] = {'mean':None,'median':None}
+        if 'crime' not in v:
+            v['crime'] = {}
+            for c in range(6):
+                v['crime'][crime_name[c]] = None
+
+    cdb = CouchDB()
+    ic_db = cdb.create_db('area_rent_income_crime')
+    ic_db = cdb.get_db('area_rent_income_crime')
+    ic_db.save(resp)
+    return resp
+
+
 import json
 from datetime import timedelta
-
+'''
 cdb = CouchDB()
 a = cdb.create_db('language')
 h_db = cdb.get_db('language')
 resp = get_lang()
 h_db.save(resp)
-'''
+
 a = cdb.create_db('cases')
 h_db = cdb.get_db('cases')
 resp = get_cases()
 h_db.save(resp)'''
 
 '''cdb = CouchDB()
-e_db = cdb.get_db('melbourne2020_all')
-a = cdb.create_db('hotword_50')
-h_db = cdb.get_db('hotword_50')
-table = e_db.iterview('_design/dictionary/_view/text_data',3000)
+e_db = cdb.get_db('melbourne20_21')
+a = cdb.create_db('hotword_50_hour')
+h_db = cdb.get_db('hotword_50_hour')
+table = e_db.iterview('_design/dictionary/_view/textdate',3000)
 timeline = get_topN(table)
-with open('timeline.json','w') as jj:
+with open('timeline_all.json','w') as jj:
     json.dump(timeline, jj)
 
 for k,v in timeline.items():
     print(k)
     print(len(list(v.keys())))
-    h_db[k] = v
-'''
+    h_db[k] = v'''
 
+
+resp = save_area_rent_income_crime()
