@@ -122,6 +122,7 @@ class Sidebar extends React.Component{
             <FormControlLabel value="Victoria Covid" control={<Radio />} label="Victoria Covid" />
             <FormControlLabel value="Tweet Heatmap" control={<Radio />} label="Tweet Heatmap" />
             <FormControlLabel value="Tweet Top words" control={<Radio />} label="Tweet Top Words/Tags" />
+            <FormControlLabel value="Languages" control={<Radio />} label="Languages" />
           </RadioGroup>
         </FormControl>
       </Grid>
