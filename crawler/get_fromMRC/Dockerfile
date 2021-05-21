@@ -1,12 +1,8 @@
-FROM python:3.7.3
+FROM python:3
 
-ENV http_proxy http://wwwproxy.unimelb.edu.au:8000
-ENV https_proxy http://wwwproxy.unimelb.edu.au:8000
+ADD . /
 
-RUN mkdir /workspace
-WORKDIR /workspace
-ADD . /workspace
-
+# Install dependencies
 RUN pip install -r requirements.txt
 
 CMD [ "python", "./get_fromMRC_2021.py"]
