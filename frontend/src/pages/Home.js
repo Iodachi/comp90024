@@ -1,19 +1,29 @@
 import 'mapbox-gl/dist/mapbox-gl.css';
 //import melb from "./../melb.geojson"
-import vic from "./../vic.geojson"
+import vic from "./../vicpop.geojson"
 import heatmap from "./../processed.geojson"
 import covidCase from './../case.geojson'
 import React from 'react'
 import mapboxgl from '!mapbox-gl';// eslint-disable-line import/no-webpack-loader-syntax
 import './Home.css'
+import PopulationDistributionDonutChart from '../components/PopulationDistributionDonutChart';
+import Popup from 'reactjs-popup';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiaW9kYWNoaSIsImEiOiJja29zaGNxbXgwMWllMnhxN201ZXJ0Yjl3In0.6UNecHRhTT17I-PaJOfaNg';
 export class Home extends React.Component {
     constructor(props) {
         super(props);
         this.mapContainer = React.createRef();
+        this.state = {
+            open: false,
+        }
     }
 
+    close = () => {
+        this.setState({
+            open: false
+        })
+    }
     getScenario(nextProps){
         if(this.props.globalStore.scenario !== nextProps)
             this.isCovid = nextProps.globalStore.scenario === "Victoria Covid"
@@ -39,7 +49,7 @@ export class Home extends React.Component {
             container: this.mapContainer.current,
             style: 'mapbox://styles/iodachi/ckosm3m3y2il318mpgeza2axh',
             center: [144.959087, -37.801993],
-            zoom: 9,
+            zoom: 7,
         });
         var hoveredVicId =  null;
 
@@ -153,9 +163,65 @@ export class Home extends React.Component {
         });
         
     }else if(this.isHeatmap){
-        map.on('load', function () {
-            // Add a geojson point source.
-            // Heatmap layers also work with a vector tile source.
+        var colors2 = ['#DFFF00', '#0FFF50', '#4CBB17', '#228B22', '#355E3B', '#023020'];
+        map.on('load',  () =>  {
+            this.open = false;
+            fetch("http://127.0.0.1:8000/api/area/age")
+            .then(res => res.json())
+            .then(
+                (result) => {
+                   this.ageInfo = result
+                },
+                (error) => {
+                    this.setState({
+                        error
+                    });
+            })
+
+            map.addSource("vic", {
+                "type": "geojson",
+                "data": vic,
+                'generateId': true 
+            });
+            map.addLayer({
+                "id": "vic-fills",
+                "type": "fill",
+                "source": "vic",
+                "layout": {},
+                "paint": {
+                'fill-color': [
+                        'step', ['get', 'population'],
+                        colors2[0],
+                        10000,
+                        colors2[1],
+                        40000,
+                        colors2[2],
+                        80000,
+                        colors2[3],
+                        120000,
+                        colors2[4],
+                        160000,
+                        colors2[5],
+                        ],
+                "fill-opacity": ["case",
+                ["boolean", ["feature-state", "hover"], false],
+                    0.8,
+                    0.5
+                ]
+                }
+            });
+             
+            map.addLayer({
+                "id": "vic-borders",
+                "type": "line",
+                "source": "vic",
+                "layout": {},
+                "paint": {
+                "line-color": "#627BC1",
+                "line-width": 2
+                }
+            });
+            
             map.addSource('heatmap', {
             'type': 'geojson',
             'data': heatmap
@@ -284,6 +350,32 @@ export class Home extends React.Component {
             },
             'waterway-label'
             );
+
+             
+            map.on("mousemove", "vic-fills", function(e) {
+                if (e.features.length > 0) {
+                if (hoveredVicId) {
+                    map.setFeatureState({source: 'vic', id: hoveredVicId}, { hover: false});
+                }
+                hoveredVicId = e.features[0].id;
+                map.setFeatureState({source: 'vic', id: hoveredVicId}, { hover: true});
+                }
+            });
+             
+            map.on("mouseleave", "vic-fills", function() {
+                if (hoveredVicId) {
+                    map.setFeatureState({source: 'vic', id: hoveredVicId}, { hover: false});
+                }
+                hoveredVicId =  null;
+            });
+
+            map.on('click', 'vic-fills', (e) => {
+                this.setState({
+                    open: true,
+                    chartData: this.ageInfo[e.features[0].properties.vic_lga__3],
+                    lgaName: e.features[0].properties.vic_lga__3
+                })
+            });
             });
     }else if (this.isLanguages){
             
@@ -311,7 +403,7 @@ export class Home extends React.Component {
                 "source": "vic",
                 "layout": {},
                 "paint": {
-                "fill-color": "#627BC1",
+                'fill-color': "#627BC1",
                 "fill-opacity": ["case",
                 ["boolean", ["feature-state", "hover"], false],
                     0.5,
@@ -349,7 +441,7 @@ export class Home extends React.Component {
             });
 
             map.on('click', 'vic-fills', function (e) {
-                console.log(this.languages)
+                console.log(e.features[0].properties.vic_lga__3)
                 new mapboxgl.Popup()
                 .setLngLat(e.lngLat)
                 .setHTML(JSON.stringify(this.languages[e.features[0].properties.vic_lga__3]))
@@ -361,8 +453,18 @@ export class Home extends React.Component {
         
     render() {
         return (
+            <div>
         <div>
             <div ref={this.mapContainer} className="map-container" />
+        </div>
+        <div className="popup">
+            <Popup open={this.state.open}
+            onClose={this.close}>
+                <PopulationDistributionDonutChart 
+                    data = {this.state.chartData}
+                    name = {this.state.lgaName}/>
+            </Popup>
+        </div>
         </div>
         );
     }
