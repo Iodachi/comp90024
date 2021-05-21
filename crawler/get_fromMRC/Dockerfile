@@ -1,7 +1,8 @@
-FROM python:3.8.5
+FROM python:3
 
 ENV http_proxy http://wwwproxy.unimelb.edu.au:8000
 ENV https_proxy http://wwwproxy.unimelb.edu.au:8000
+
 
 RUN mkdir /workspace
 WORKDIR /workspace
