@@ -6,6 +6,8 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import TweetTokenizer
 import pandas as pd
+import json
+from datetime import timedelta
 
 def make_name_data(name, data):
     resp = {}
@@ -186,9 +188,84 @@ def save_area_rent_income_crime():
     ic_db.save(resp)
     return resp
 
+'''def conver_hour_day():
+    cdb = CouchDB()
+    h_db = cdb.get_db('hotword_50_hour')
+    key_str = ''
+    for i in tqdm(data.view('_all_docs')):
+        if key_str != i.id[:-2]
+        if i.id in l:
+            w = data.get(i.id)
+            w.pop('_id')
+            w.pop('_rev')
+            total += Counter(w)'''
 
-import json
-from datetime import timedelta
+def save_au_heat():
+    cdb = CouchDB()
+    au_db = cdb.get_db('has_location_try')
+    table = au_db.iterview('_design/dictionary/_view/textdate',3000)
+    resp = {}
+    resp = precess_au_heatmap(table)
+    ic_db = cdb.create_db('au_heatmap')
+    ic_db = cdb.get_db('au_heatmap')
+    ic_db.save(resp)
+    return resp
+
+
+
+def save_area_age():
+    age = pd.read_csv('./api/data/age.csv')
+    f = open('./api/data/vic_geo.json','r')
+    vic = json.load(f)
+    f.close()
+
+    loc = []
+    for i in vic['features']:
+        loc.append(i['properties']['vic_lga__3'])
+
+    aa = []
+    for i in range(86):
+        if i % 5 == 0:
+            aa.append('%d - %d' % (i, i+4)) 
+    resp = {}
+    for i in range(len(age)):
+        area = age.loc[i, ' lga_name']
+        precent = age.loc[i, [  ' _0_4_yrs_proj_percent',' _5_9_yrs_proj_percent', 
+                                ' _10_14_yrs_proj_percent',' _15_19_yrs_proj_percent', 
+                                ' _20_24_yrs_proj_percent',' _25_29_yrs_proj_percent',
+                                ' _30_34_yrs_proj_percent', ' _35_39_yrs_proj_percent',
+                                ' _40_44_yrs_proj_percent', ' _45_49_yrs_proj_percent',
+                                ' _50_54_yrs_proj_percent', ' _55_59_yrs_proj_percent',
+                                ' _60_64_yrs_proj_percent',' _65_69_yrs_proj_percent',
+                                ' _70_74_yrs_proj_percent',' _75_79_yrs_proj_percent',
+                                ' _80_84_yrs_proj_percent',' _85_yrs_over_proj_percent']]
+        pop = age.loc[i, [        ' _0_4_yrs_proj_count',   ' _5_9_yrs_proj_count', 
+                                ' _10_14_yrs_proj_count', ' _15_19_yrs_proj_count', 
+                                ' _20_24_yrs_proj_count', ' _25_29_yrs_proj_count',
+                                ' _30_34_yrs_proj_count', ' _35_39_yrs_proj_count',
+                                ' _40_44_yrs_proj_count', ' _45_49_yrs_proj_count',
+                                ' _50_54_yrs_proj_count', ' _55_59_yrs_proj_count',
+                                ' _60_64_yrs_proj_count', ' _65_69_yrs_proj_count',
+                                ' _70_74_yrs_proj_count', '_75_79_yrs_proj_count',
+                                ' _80_84_yrs_proj_count',' _85_yrs_over_proj_count']]
+        
+        area_name = wash_lga_name(area,loc)
+
+        if area_name in loc:
+            resp[area_name] = {}
+            resp[area_name]['Count'] = {}
+            resp[area_name]['Percent'] = {}
+            for i in range(len(pop)):
+                resp[area_name]['Count'][aa[i]] = int(pop[i])
+                resp[area_name]['Percent'][aa[i]] = float(precent[i])
+
+    cdb = CouchDB()
+    ric_db = cdb.create_db('area_age')
+    ric_db = cdb.get_db('area_age')
+
+    ric_db.save(resp)
+    return resp
+
 '''
 cdb = CouchDB()
 a = cdb.create_db('language')
@@ -216,4 +293,4 @@ for k,v in timeline.items():
     h_db[k] = v'''
 
 
-resp = save_area_rent_income_crime()
+#resp = save_area_age()
