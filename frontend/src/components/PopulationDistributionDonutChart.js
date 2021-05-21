@@ -7,12 +7,12 @@ class PopulationDistributionDonutChart extends React.Component {
       super(props);
 
       this.state = {
-        series: [44, 55, 41, 17, 15],
+        series: [],
         options: {
           chart: {
             type: 'donut',
           },
-          labels: ['Team A', 'Team B', 'Team C', 'Team D', 'Team E'],
+          labels: [],
           responsive: [{
             breakpoint: 480,
             options: {
@@ -39,6 +39,16 @@ class PopulationDistributionDonutChart extends React.Component {
           },
       }
     }
+    }
+
+    componentDidMount(){
+        this.setState({
+            series: this.props.data.data.count,
+            options: {
+            ...this.state.options,
+            labels: this.props.data.data.labels
+            }
+        })
     }
 
     render() {

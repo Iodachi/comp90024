@@ -7,6 +7,7 @@ import React from 'react'
 import mapboxgl from '!mapbox-gl';// eslint-disable-line import/no-webpack-loader-syntax
 import './Home.css'
 import PopulationDistributionDonutChart from '../components/PopulationDistributionDonutChart';
+import LanguageDistributionBarChart from '../components/LanguageDistributionBarChart';
 import Popup from 'reactjs-popup';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiaW9kYWNoaSIsImEiOiJja29zaGNxbXgwMWllMnhxN201ZXJ0Yjl3In0.6UNecHRhTT17I-PaJOfaNg';
@@ -16,6 +17,7 @@ export class Home extends React.Component {
         this.mapContainer = React.createRef();
         this.state = {
             open: false,
+            openLanguage: false,
         }
     }
 
@@ -24,14 +26,26 @@ export class Home extends React.Component {
             open: false
         })
     }
-    getScenario(nextProps){
-        if(this.props.globalStore.scenario !== nextProps)
+
+    closeLanguage = () => {
+        this.setState({
+            openLanguage: false
+        })
+    }
+
+    getValueFromParent(nextProps){
+        if(this.props.globalStore.scenario !== nextProps.scenario){
             this.isCovid = nextProps.globalStore.scenario === "Victoria Covid"
             this.isHeatmap = nextProps.globalStore.scenario === "Tweet Heatmap"
             this.isLanguages = nextProps.globalStore.scenario === "Languages"
+        }
+        if(this.props.globalStore.language !== nextProps.language){
+            this.selectedLanguage = nextProps.globalStore.language
+        }
     }
 
     componentDidMount() {
+        this.selectedLanguage = "ar"
         const map = new mapboxgl.Map({
             container: this.mapContainer.current,
             style: 'mapbox://styles/iodachi/ckosm3m3y2il318mpgeza2axh',
@@ -44,7 +58,7 @@ export class Home extends React.Component {
     }
 
     UNSAFE_componentWillReceiveProps(nextProps){
-        this.getScenario(nextProps)
+        this.getValueFromParent(nextProps)
         const map = new mapboxgl.Map({
             container: this.mapContainer.current,
             style: 'mapbox://styles/iodachi/ckosm3m3y2il318mpgeza2axh',
@@ -228,129 +242,52 @@ export class Home extends React.Component {
             });
              
             map.addLayer(
-            {
-            'id': 'heat',
-            'type': 'heatmap',
-            'source': 'heatmap',
-            'maxzoom': 9,
-            'paint': {
-            // Increase the heatmap weight based on frequency and property magnitude
-            'heatmap-weight': [
-            'interpolate',
-            ['linear'],
-            ['get', 'mag'],
-            0,
-            0,
-            6,
-            1
-            ],
-            // Increase the heatmap color weight weight by zoom level
-            // heatmap-intensity is a multiplier on top of heatmap-weight
-            'heatmap-intensity': [
-            'interpolate',
-            ['linear'],
-            ['zoom'],
-            0,
-            1,
-            9,
-            3
-            ],
-            // Color ramp for heatmap.  Domain is 0 (low) to 1 (high).
-            // Begin color ramp at 0-stop with a 0-transparancy color
-            // to create a blur-like effect.
-            'heatmap-color': [
-            'interpolate',
-            ['linear'],
-            ['heatmap-density'],
-            0,
-            'rgba(33,102,172,0)',
-            0.2,
-            'rgb(103,169,207)',
-            0.4,
-            'rgb(209,229,240)',
-            0.6,
-            'rgb(253,219,199)',
-            0.8,
-            'rgb(239,138,98)',
-            1,
-            'rgb(178,24,43)'
-            ],
-            // Adjust the heatmap radius by zoom level
-            'heatmap-radius': [
-            'interpolate',
-            ['linear'],
-            ['zoom'],
-            0,
-            2,
-            9,
-            20
-            ],
-            // Transition from heatmap to circle layer by zoom level
-            'heatmap-opacity': [
-            'interpolate',
-            ['linear'],
-            ['zoom'],
-            7,
-            1,
-            9,
-            0
-            ]
-            }
-            },
-            'waterway-label'
-            );
-             
-            map.addLayer(
-            {
-            'id': 'heat-point',
-            'type': 'circle',
-            'source': 'heatmap',
-            'minzoom': 7,
-            'paint': {
-            'circle-radius': [
-            'interpolate',
-            ['linear'],
-            ['zoom'],
-            7,
-            ['interpolate', ['linear'], ['get', 'mag'], 1, 1, 6, 4],
-            16,
-            ['interpolate', ['linear'], ['get', 'mag'], 1, 5, 6, 50]
-            ],
-
-            'circle-color': [
-            'interpolate',
-            ['linear'],
-            ['get', 'mag'],
-            1,
-            'rgba(33,102,172,0)',
-            2,
-            'rgb(103,169,207)',
-            3,
-            'rgb(209,229,240)',
-            4,
-            'rgb(253,219,199)',
-            5,
-            'rgb(239,138,98)',
-            6,
-            'rgb(178,24,43)'
-            ],
-            'circle-stroke-color': 'white',
-            'circle-stroke-width': 1,
-            // Transition from heatmap to circle layer by zoom level
-            'circle-opacity': [
-            'interpolate',
-            ['linear'],
-            ['zoom'],
-            7,
-            0,
-            8,
-            1
-            ]
-            }
-            },
-            'waterway-label'
-            );
-
+                {
+                'id': 'heat',
+                'type': 'heatmap',
+                'source': 'heatmap',
+                'maxzoom': 9,
+                'paint': {
+                'heatmap-weight': [
+                    'interpolate', ['linear'], ['get', 'mag'], 0, 0, 6, 1],
+                'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 0, 1, 9, 3],
+                'heatmap-color': [
+                    'interpolate', ['linear'], ['heatmap-density'], 0,
+                    'rgba(33,102,172,0)', 0.2, 'rgb(103,169,207)', 0.4,
+                    'rgb(209,229,240)', 0.6, 'rgb(253,219,199)', 0.8,
+                    'rgb(239,138,98)', 1, 'rgb(178,24,43)'],
+                'heatmap-radius': [
+                    'interpolate', ['linear'], ['zoom'], 0, 2, 9, 20],
+                'heatmap-opacity': [
+                    'interpolate', ['linear'], ['zoom'], 7, 1, 9, 0]}
+                },
+                'waterway-label'
+                );
+                 
+                map.addLayer(
+                {
+                'id': 'heat-point',
+                'type': 'circle',
+                'source': 'heatmap',
+                'minzoom': 7,
+                'paint': {
+                'circle-radius': [
+                    'interpolate', ['linear'], ['zoom'], 7,
+                    ['interpolate', ['linear'], ['get', 'mag'], 1, 1, 6, 4], 16,
+                    ['interpolate', ['linear'], ['get', 'mag'], 1, 5, 6, 50]
+                ],
+                'circle-color': [
+                    'interpolate', ['linear'], ['get', 'mag'], 1, 'rgba(33,102,172,0)',
+                    2, 'rgb(103,169,207)', 3, 'rgb(209,229,240)', 4, 'rgb(253,219,199)',
+                    5, 'rgb(239,138,98)', 6, 'rgb(178,24,43)'],
+                'circle-stroke-color': 'white',
+                'circle-stroke-width': 1,
+                'circle-opacity': [
+                    'interpolate', ['linear'], ['zoom'], 7, 0, 8, 1 
+                    ]}
+                },
+                'waterway-label'
+                );
              
             map.on("mousemove", "vic-fills", function(e) {
                 if (e.features.length > 0) {
@@ -378,8 +315,7 @@ export class Home extends React.Component {
             });
             });
     }else if (this.isLanguages){
-            
-        map.on('load', function () {  
+        map.on('load', () => {  
 
         fetch("http://127.0.0.1:8000/api/language")
         .then(res => res.json())
@@ -388,65 +324,134 @@ export class Home extends React.Component {
                 this.languages = result
             },
             (error) => {
-                this.setState({
-                    error
-                });
         })
-            map.addSource("vic", {
-                "type": "geojson",
-                "data": vic,
-                'generateId': true 
-            });
-            map.addLayer({
-                "id": "vic-fills",
-                "type": "fill",
-                "source": "vic",
-                "layout": {},
-                "paint": {
-                'fill-color': "#627BC1",
-                "fill-opacity": ["case",
-                ["boolean", ["feature-state", "hover"], false],
-                    0.5,
-                    0.1
-                ]
-                }
-            });
-             
-            map.addLayer({
-                "id": "vic-borders",
-                "type": "line",
-                "source": "vic",
-                "layout": {},
-                "paint": {
-                "line-color": "#627BC1",
-                "line-width": 2
-                }
-            });
-             
-            map.on("mousemove", "vic-fills", function(e) {
-                if (e.features.length > 0) {
-                if (hoveredVicId) {
-                    map.setFeatureState({source: 'vic', id: hoveredVicId}, { hover: false});
-                }
-                hoveredVicId = e.features[0].id;
-                map.setFeatureState({source: 'vic', id: hoveredVicId}, { hover: true});
-                }
-            });
-             
-            map.on("mouseleave", "vic-fills", function() {
-                if (hoveredVicId) {
-                    map.setFeatureState({source: 'vic', id: hoveredVicId}, { hover: false});
-                }
-                hoveredVicId =  null;
-            });
 
-            map.on('click', 'vic-fills', function (e) {
-                console.log(e.features[0].properties.vic_lga__3)
-                new mapboxgl.Popup()
-                .setLngLat(e.lngLat)
-                .setHTML(JSON.stringify(this.languages[e.features[0].properties.vic_lga__3]))
-                .addTo(map);
-            });
+        map.addSource("vic", {
+            "type": "geojson",
+            "data": vic,
+            'generateId': true 
+        });
+
+        map.addLayer({
+            "id": "vic-fills",
+            "type": "fill",
+            "source": "vic",
+            "layout": {},
+            "paint": {
+            'fill-color': "#627BC1",
+            "fill-opacity": ["case",
+            ["boolean", ["feature-state", "hover"], false],
+                0.5,
+                0.1
+            ]
+            }
+        });
+         
+        map.addLayer({
+            "id": "vic-borders",
+            "type": "line",
+            "source": "vic",
+            "layout": {},
+            "paint": {
+            "line-color": "#627BC1",
+            "line-width": 2,
+            "line-opacity": 0.4
+            }
+        });
+         
+        map.on("mousemove", "vic-fills", function(e) {
+            if (e.features.length > 0) {
+            if (hoveredVicId) {
+                map.setFeatureState({source: 'vic', id: hoveredVicId}, { hover: false});
+            }
+            hoveredVicId = e.features[0].id;
+            map.setFeatureState({source: 'vic', id: hoveredVicId}, { hover: true});
+            }
+        });
+         
+        map.on("mouseleave", "vic-fills", function() {
+            if (hoveredVicId) {
+                map.setFeatureState({source: 'vic', id: hoveredVicId}, { hover: false});
+            }
+            hoveredVicId =  null;
+        });
+
+        map.on('click', 'vic-fills', (e) => {
+            this.setState({
+                openLanguage: true,
+                languageChartData: this.languages[e.features[0].properties.vic_lga__3],
+                lgaName: e.features[0].properties.vic_lga__3
+            })
+
+            // new mapboxgl.Popup()
+            // .setLngLat(e.lngLat)
+            // .setHTML(JSON.stringify(this.languages[e.features[0].properties.vic_lga__3]))
+            // .addTo(map);
+        });
+        
+        fetch(`http://127.0.0.1:8000/api/language/heatmap/${this.selectedLanguage}`)
+        .then(res => res.json())
+        .then(
+            (result) => {
+                this.languageHeatmap = result
+            },
+            (error) => {
+        })
+
+        if(this.languageHeatmap){
+            map.addSource('heatmap', {
+                'type': 'geojson',
+                'data': this.languageHeatmap
+                });
+                 
+                map.addLayer(
+                {
+                'id': 'heat',
+                'type': 'heatmap',
+                'source': 'heatmap',
+                'maxzoom': 9,
+                'paint': {
+                'heatmap-weight': [
+                    'interpolate', ['linear'], ['get', 'mag'], 0, 0, 6, 1],
+                'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 0, 1, 9, 3],
+                'heatmap-color': [
+                    'interpolate', ['linear'], ['heatmap-density'], 0,
+                    'rgba(33,102,172,0)', 0.2, 'rgb(103,169,207)', 0.4,
+                    'rgb(209,229,240)', 0.6, 'rgb(253,219,199)', 0.8,
+                    'rgb(239,138,98)', 1, 'rgb(178,24,43)'],
+                'heatmap-radius': [
+                    'interpolate', ['linear'], ['zoom'], 0, 2, 9, 20],
+                'heatmap-opacity': [
+                    'interpolate', ['linear'], ['zoom'], 7, 1, 9, 0]}
+                },
+                'waterway-label'
+                );
+                 
+                map.addLayer(
+                {
+                'id': 'heat-point',
+                'type': 'circle',
+                'source': 'heatmap',
+                'minzoom': 7,
+                'paint': {
+                'circle-radius': [
+                    'interpolate', ['linear'], ['zoom'], 7,
+                    ['interpolate', ['linear'], ['get', 'mag'], 1, 1, 6, 4], 16,
+                    ['interpolate', ['linear'], ['get', 'mag'], 1, 5, 6, 50]
+                ],
+                'circle-color': [
+                    'interpolate', ['linear'], ['get', 'mag'], 1, 'rgba(33,102,172,0)',
+                    2, 'rgb(103,169,207)', 3, 'rgb(209,229,240)', 4, 'rgb(253,219,199)',
+                    5, 'rgb(239,138,98)', 6, 'rgb(178,24,43)'],
+                'circle-stroke-color': 'white',
+                'circle-stroke-width': 1,
+                'circle-opacity': [
+                    'interpolate', ['linear'], ['zoom'], 7, 0, 8, 1 
+                    ]}
+                },
+                'waterway-label'
+                );
+        }
         });
     }
     }
@@ -462,6 +467,15 @@ export class Home extends React.Component {
             onClose={this.close}>
                 <PopulationDistributionDonutChart 
                     data = {this.state.chartData}
+                    name = {this.state.lgaName}/>
+            </Popup>
+        </div>
+
+        <div className="popup">
+            <Popup open={this.state.openLanguage}
+            onClose={this.closeLanguage}>
+                <LanguageDistributionBarChart 
+                    data = {this.state.languageChartData}
                     name = {this.state.lgaName}/>
             </Popup>
         </div>

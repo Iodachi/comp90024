@@ -1,12 +1,14 @@
 import React from 'react'
 import Chart from 'react-apexcharts'
 
-class EmploymentBarChart extends React.Component {
+class LanguageDistributionBarChart extends React.Component {
     constructor(props) {
       super(props);
 
       this.state = {
-        series: [],
+        series: [{
+            data: [400, 430, 448, 470, 540, 580, 690, 1100, 1200, 1380],
+        }],
         options: {
           chart: {
             type: 'bar',
@@ -22,13 +24,14 @@ class EmploymentBarChart extends React.Component {
             colors: ['#fff']
           },
           title: {
-            text: 'Melbourne Employment'
+            text: ''
           },
           noData: {
             text: 'Loading...'
           },
           xaxis: {
-            categories: ['2016', '2019', '2020'],
+            categories: ['South Korea', 'Canada', 'United Kingdom', 'Netherlands', 'Italy', 'France', 'Japan',
+            'United States', 'China', 'Germany'],
           },
           yaxis: {
             title: {
@@ -49,24 +52,11 @@ class EmploymentBarChart extends React.Component {
       };
     }
 
-    componentDidMount() {
-        fetch("http://127.0.0.1:8000/api/employment")
-          .then(res => res.json())
-          .then(
-            (result) => {
-              console.log(result)
-              this.setState({
-                isLoaded: true,
-                series: result.series
-              });
-            },
-            (error) => {
-              this.setState({
-                isLoaded: true,
-                error
-              });
-            })
-          }
+    componentDidMount(){
+        console.log(this.props)
+        this.setState({
+        })
+    }
 
     render() {
       return (
@@ -85,4 +75,4 @@ class EmploymentBarChart extends React.Component {
       );
     }
   }
-export default EmploymentBarChart;
+export default LanguageDistributionBarChart;
