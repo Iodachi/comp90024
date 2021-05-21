@@ -1,7 +1,7 @@
 import json
-
+from tqdm import tqdm
 import jsonlines
-
+import random
 
 def read_small_json(input_file):
     with open(input_file) as f:
@@ -65,7 +65,7 @@ from collections import Counter
 
 def get_top_word_1(l, data,mode = 'word', n = 20):
     total = Counter({})
-    for i in data.view('_all_docs'):
+    for i in tqdm(data.view('_all_docs')):
         if i.id in l:
             w = data.get(i.id)
             w.pop('_id')
@@ -129,7 +129,7 @@ def wash_lga_name(lga_name, real_name):
     else:
         return result_name
 
-from tqdm import tqdm
+
 def precess_lang(dataset,rname):
     resp = {}
 
@@ -176,3 +176,25 @@ def precess_case(dataset, loc, rname):
         geo = make_geo(cord)
         resp['features'].append(geo)
     return resp
+
+
+def random_float(low, high):
+    return random.random()*(high-low) + low
+
+def precess_au_heatmap(view):
+    resp = {"type": "FeatureCollection","features": []}
+    for v in view:
+        if v[0]:
+            cord = v[0].copy().reverse()
+        if v[1]:
+            cord = v[0].copy().reverse()
+        if v[2]:
+            if len(v[2][0]) == 4:
+                x = random_float(v[2][0][0][0], v[2][2][0][0])
+                y = random_float(v[2][0][0][1], v[2][2][0][1])
+                cord = [x,y]
+        geo = make_geo(cord)
+        resp['features'].append(geo)
+    return resp
+
+

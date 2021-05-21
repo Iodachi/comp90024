@@ -77,11 +77,11 @@ def get_employment(request):
     else:
         return HttpResponseBadRequest('request should be get')
 
-print('http://127.0.0.1:8000/api/tweet/top/word/5/Jan-01-2020-00:00:00/Dec-31-2020-00:00:00')
+print('http://127.0.0.1:8000/api/tweet/top/word/20/Oct-12-2020-00:00:00/Oct-13-2020-00:00:00')
 def get_top(request, mode = 'word', n = 20, timeS = None, timeE=None):
     if request.method == 'GET':
         cdb = CouchDB()
-        data = cdb.get_db('hotword_50')
+        data = cdb.get_db('hotword_50_hour')
         l = generate_data_key(timeS,timeE)
         print('here')
         resp = get_top_word_1(l,data, mode, n)
@@ -134,6 +134,22 @@ def get_areaInfo(request):
         cdb = CouchDB()
         db = cdb.get_db('area_rent_income_crime')
         resp = db.get('bdb85cf015fe7fe55ca28dd28cd3f2f4')
+        resp.pop('_id')
+        resp.pop('_rev')
+
+        if resp:
+            return HttpResponse(json.dumps(resp), content_type='application/json')
+        else:
+            return HttpResponseBadRequest(resp)
+    else:
+        return HttpResponseBadRequest('request should be get')
+
+print('http://127.0.0.1:8000/api/area/age')
+def get_areaAge(request):
+    if request.method == 'GET':
+        cdb = CouchDB()
+        db = cdb.get_db('area_age')
+        resp = db.get('b06e5a782861b6d000a6a41504f8e830')
         resp.pop('_id')
         resp.pop('_rev')
 

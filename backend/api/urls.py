@@ -9,4 +9,5 @@ urlpatterns = [
     path("api/cases", views.get_cases, name="get_cases"),
     path("api/language", views.get_lang, name="get_lang"),
     path("api/area/info", views.get_areaInfo, name="get_areaInfo"),
+    path("api/area/age", views.get_areaAge, name="get_areaAge"),
 ]
