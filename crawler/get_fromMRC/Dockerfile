@@ -9,4 +9,4 @@ ADD . /workspace
 
 RUN pip install -r requirements.txt
 
-CMD [ "python", "./get_fromMRC_nogeo.py"]
+CMD [ "python", "./get_fromMRC_2021.py"]
