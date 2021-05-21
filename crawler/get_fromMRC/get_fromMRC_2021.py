@@ -37,9 +37,9 @@ secure_remote_server = Server('http://admin:admin@172.26.133.210:5984/')
 parser = argparse.ArgumentParser(description='COMP90024 Project Scrape Research Data')
 parser.add_argument('--batch', type=int, default=1000)
 parser.add_argument('--total_forday', type=int, default=80000)
-parser.add_argument('--startkey', type=str, default='[\"melbourne\",2020,10,6]')
-parser.add_argument('--endkey', type=str, default='[\"melbourne\",2020,10,6]')
-
+parser.add_argument('--startkey', type=str, default='[\"melbourne\",2020,12,10]')
+parser.add_argument('--endkey', type=str, default='[\"melbourne\",2020,12,10]')
+parser.add_argument('--dbname', type=str, default='twitter_raw')
 args = parser.parse_args()
 # argsparser
 url = 'http://couchdb.socmedia.bigtwitter.cloud.edu.au/twitter/_design/twitter/_view/summary'
@@ -51,13 +51,14 @@ tweet_perday = 10000
 start_key = args.startkey
 end_key = args.endkey
 date_str = start_key
-serverName = 'melbourne20_21'
+serverName = args.dbname
 
 try:
-    db = secure_remote_server['melbourne20_21']
+    db = secure_remote_server.create(serverName)
+    
 except:
     print('database already exist!!')
-
+    db = secure_remote_server[serverName]
 params={'include_docs':'true','reduce':'false','start_key':start_key,'end_key':end_key,"skip": "0", "limit": str(BATCHSIZE)}
 TOTALSIZE = args.total_forday
 
@@ -70,11 +71,8 @@ while True:
     print(params['start_key'],params['end_key'])
 
     date = get_time(date_str)
-    if date == datetime(2021,1,14):
+    if date == datetime(2020,12,15):
         break
-    if date == datetime(2020,10,10):
-        date_str = next_date(date)
-        continue
     num = 0
     params['skip'] = str(0)
     while num<TOTALSIZE:
@@ -91,7 +89,7 @@ while True:
             count = 0
             for tweet in tweetlst:
                 try:
-                    if count%6 == 0:
+                    if count%7 == 0:
                         dataDict = {}
                         dataDict["id"] = tweet["id"]
                         dataDict["user"] = tweet["doc"]["user"]["screen_name"]

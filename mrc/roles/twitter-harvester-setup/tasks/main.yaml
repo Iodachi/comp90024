@@ -31,18 +31,18 @@
     content: "{{ docker_proxy_settings }}"
     dest: ~/.docker/config.json
 
-# Build Docker image for tweet harvester
-# - name: Build an image and push it to local repo
-#   docker_image:
-#     build:
-#       path: '~/comp90024/crawler/get_fromMRC'
-#       pull: yes
-#     name: comp90024/crawler/get_fromMRC
-#     tag: latest
-#     source: build
-#     force: yes
-#   become: yes
-#   environment: "{{ proxy_env }}"
+#Build Docker image for tweet harvester
+- name: Build an image and push it to local repo
+  docker_image:
+    build:
+      path: '/home/ubuntu/comp90024/crawler/get_fromMRC'
+      pull: yes
+    name: comp90024/crawler/get_fromMRC
+    tag: latest
+    source: build
+    force: yes
+  become: yes
+  environment: "{{ proxy_env }}"
 
 # # Stop existing Docker containers for Twitter Harvesters and remove them (if any)
 # - name: Stop Twitter Harvester Docker container
