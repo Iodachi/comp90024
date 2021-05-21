@@ -51,11 +51,15 @@ def make_name_data(name, data):
 from datetime import datetime, timedelta
 
 def get_time(elm):
-    if len(elm) > 14:
+    if '-+' in elm:
         date = datetime.strptime(elm, '%a-%b-%d-%H:%M:%S-+0000-%Y')
+    elif elm[-5:] == '+0000':
+        date = datetime.strptime(elm, '%Y-%m-%d %H:%M:%S+0000')
     else:
         date = datetime.strptime(elm, '%Y/%m/%d/%H')
     return date
+
+
 
 def get_front_time(time_str):
     data = datetime.strptime(time_str, '%b-%d-%Y-%H:%M:%S')
@@ -70,7 +74,8 @@ def get_top_word_1(l, data,mode = 'word', n = 20):
             w = data.get(i.id)
             w.pop('_id')
             w.pop('_rev')
-            total += Counter(w)
+            word = w['data'].copy()
+            total += Counter(word)
 
     print('finish')
     total = dict(total)
@@ -208,3 +213,19 @@ def process_lang_heatmap(view):
         resp['features'].append(geo)
     return resp
 
+def stella(resp):
+    
+    resp.pop('_id')
+    resp.pop('_rev')
+    new_resp = {}
+    for k,v in resp.items():
+        new = {'seires':[],'categories' : []}
+        data = {'data':[]}
+        for lang, count in v.items():
+            if count != 0:
+                data['data'].append(count)
+                new['categories'].append(lang)
+        new['seires'].append(data)
+        new_resp[k] = new
+
+    return new_resp

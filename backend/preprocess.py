@@ -55,8 +55,13 @@ def get_all_hashtags(data):
     return dict(sorted(hashtags.items(), key=lambda item: item[1],reverse=True))
 
 from datetime import datetime
-def get_time(elm):
-    date = datetime.strptime(elm, '%a-%b-%d-%H:%M:%S-+0000-%Y')
+def get_time_self(elm):
+    if len(elm) > 24:
+        date = datetime.strptime(elm, '%a %b %d %H:%M:%S +0000-%Y')
+    elif len(elm) == 24:
+        date = datetime.strptime(elm, '%Y-%m-%d %H:%M:%S+0000')
+    else:
+        date = datetime.strptime(elm, '%Y/%m/%d/%H')
     return date
 
 from tqdm import tqdm
@@ -69,9 +74,11 @@ def get_topN(table):
 
     for tweet in tqdm(table):
         text = tweet.key[1]
-        time_str = tweet.key[0].replace(' ','-')
-        time = get_time(time_str)
-        timeb = datetime(2020,1,1,0,0,0,0)
+        if not text:
+            text = ''
+        time_str = tweet.key[0]#.replace(' ','-')
+        time = get_time_self(time_str)
+        timeb = datetime(2015,1,1,0,0,0,0)
         while timeb < datetime.now():
             timeS = timeb
             timeE = timeb + delta
@@ -267,7 +274,7 @@ def save_area_age():
     ric_db['age_15'] = resp
     return resp
 
-resp = save_area_age()
+
 '''
 cdb = CouchDB()
 a = cdb.create_db('language')
@@ -280,21 +287,26 @@ h_db = cdb.get_db('cases')
 resp = get_cases()
 h_db.save(resp)'''
 
-'''cdb = CouchDB()
-e_db = cdb.get_db('melbourne20_21')
-a = cdb.create_db('hotword_50_hour')
-h_db = cdb.get_db('hotword_50_hour')
-table = e_db.iterview('_design/dictionary/_view/textdate',3000)
-timeline = get_topN(table)
-with open('timeline_all.json','w') as jj:
-    json.dump(timeline, jj)
+def save_hotword():
+    cdb = CouchDB()
+    e_db = cdb.get_db('melbourne2016')
+    a = cdb.create_db('hotword_test')
+    h_db = cdb.get_db('hotword_test')
+    table = e_db.iterview('_design/dictionary/_view/textdate',3000)
+    timeline = get_topN(table)
+    '''with open('timeline_all.json','w') as jj:
+        json.dump(timeline, jj)'''
 
-for k,v in timeline.items():
-    print(k)
-    print(len(list(v.keys())))
-    h_db[k] = v'''
+    for k,v in timeline.items():
+        print(k)
+        print(len(list(v.keys())))
+        d = {'data': v}
+        h_db[k] = d.copy()
+        d = {}
 
+    return timeline
 
+resp = save_hotword()
 #resp = save_area_age()
 
 
@@ -315,3 +327,6 @@ def save_lang_heat():
         s_db[k] = v
     return big_resp
 
+def make_hotword_view():
+    cdb = CouchDB()
+    hot_db = cdb.get_db('hotword_50_hour')
