@@ -149,7 +149,7 @@ def get_areaAge(request):
     if request.method == 'GET':
         cdb = CouchDB()
         db = cdb.get_db('area_age')
-        resp = db.get('age')
+        resp = db.get('age_15')
         resp.pop('_id')
         resp.pop('_rev')
 

@@ -208,9 +208,8 @@ def save_au_heat():
     resp = precess_au_heatmap(table)
     ic_db = cdb.create_db('au_heatmap')
     ic_db = cdb.get_db('au_heatmap')
-    ic_db.save(resp)
+    ic_db['au_heat'] = resp
     return resp
-
 
 
 def save_area_age():
@@ -224,9 +223,12 @@ def save_area_age():
         loc.append(i['properties']['vic_lga__3'])
 
     aa = []
-    for i in range(86):
-        if i % 5 == 0:
-            aa.append('%d - %d' % (i, i+4)) 
+    for i in range(76):
+        if i % 15 == 0:
+            if i == 75:
+                aa.append('75 +')
+            else:
+                aa.append('%d - %d' % (i, i+14)) 
     resp = {}
     for i in range(len(age)):
         area = age.loc[i, ' lga_name']
@@ -246,8 +248,14 @@ def save_area_age():
             resp[area_name] = {}
             resp[area_name]['data'] = {}
             ge = []
-            for i in pop:
-                ge.append(int(i))
+            count = 0
+            for i in range(1,len(pop)+1):
+                if i % 3 == 0:
+                    count += int(pop[i-1])
+                    ge.append(count)
+                    count = 0
+                else:
+                    count += int(pop[i-1])
             resp[area_name]['data']['count'] = ge
             resp[area_name]['data']['labels'] = aa
 
@@ -256,10 +264,10 @@ def save_area_age():
     ric_db = cdb.create_db('area_age')
     ric_db = cdb.get_db('area_age')
 
-    ric_db['age'] = resp
+    ric_db['age_15'] = resp
     return resp
 
-
+resp = save_area_age()
 '''
 cdb = CouchDB()
 a = cdb.create_db('language')
