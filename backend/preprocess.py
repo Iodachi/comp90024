@@ -7,7 +7,9 @@ from nltk.corpus import stopwords
 from nltk.tokenize import TweetTokenizer
 import pandas as pd
 import json
-from datetime import timedelta
+from datetime import timedelta,datetime
+from tqdm import tqdm
+
 
 def make_name_data(name, data):
     resp = {}
@@ -54,17 +56,11 @@ def get_all_hashtags(data):
             hashtags[word] = frequency
     return dict(sorted(hashtags.items(), key=lambda item: item[1],reverse=True))
 
-from datetime import datetime
 def get_time_self(elm):
-    if len(elm) > 24:
-        date = datetime.strptime(elm, '%a %b %d %H:%M:%S +0000-%Y')
-    elif len(elm) == 24:
-        date = datetime.strptime(elm, '%Y-%m-%d %H:%M:%S+0000')
-    else:
-        date = datetime.strptime(elm, '%Y/%m/%d/%H')
+    date = datetime.strptime(elm, '%a %b %d %H:%M:%S +0000 %Y')
     return date
 
-from tqdm import tqdm
+
 def get_topN(table):
     
     tt = TweetTokenizer()
@@ -78,7 +74,7 @@ def get_topN(table):
             text = ''
         time_str = tweet.key[0]#.replace(' ','-')
         time = get_time_self(time_str)
-        timeb = datetime(2015,1,1,0,0,0,0)
+        timeb = datetime(2020,10,1,0,0,0,0)
         while timeb < datetime.now():
             timeS = timeb
             timeE = timeb + delta
@@ -95,7 +91,6 @@ def get_topN(table):
                     word_freq = get_word_freq(word_freq,ll)
                     timeline[timeS.strftime('%Y/%m/%d/%H')] = word_freq.copy()
             timeb += delta
-        #print(timeline.keys())
 
     return timeline
 
@@ -210,14 +205,17 @@ def save_area_rent_income_crime():
 def save_au_heat():
     cdb = CouchDB()
     au_db = cdb.get_db('has_location_try')
-    table = au_db.iterview('_design/dictionary/_view/geo',3000)
+    table = au_db.iterview('_design/dictionary/_view/geo',3000,descending=True)
     resp = {}
     resp = precess_au_heatmap(table)
+    with open('au_heatmap_mid.json','w') as jj:
+        json.dump(resp, jj)
     ic_db = cdb.create_db('au_heatmap')
     ic_db = cdb.get_db('au_heatmap')
-    ic_db['au_heat'] = resp
+    ic_db['au_heat_new'] = resp
     return resp
 
+#resp = save_au_heat()
 
 def save_area_age():
     age = pd.read_csv('./api/data/age.csv')
@@ -289,10 +287,10 @@ h_db.save(resp)'''
 
 def save_hotword():
     cdb = CouchDB()
-    e_db = cdb.get_db('melbourne2016')
-    a = cdb.create_db('hotword_test')
-    h_db = cdb.get_db('hotword_test')
-    table = e_db.iterview('_design/dictionary/_view/textdate',3000)
+    e_db = cdb.get_db('melbourne20_21')
+    a = cdb.create_db('hotword_all')
+    h_db = cdb.get_db('hotword_all')
+    table = e_db.iterview('_design/dictionary/_view/textdate',10000)
     timeline = get_topN(table)
     '''with open('timeline_all.json','w') as jj:
         json.dump(timeline, jj)'''
@@ -306,7 +304,7 @@ def save_hotword():
 
     return timeline
 
-resp = save_hotword()
+#resp = save_hotword()
 #resp = save_area_age()
 
 
@@ -327,6 +325,4 @@ def save_lang_heat():
         s_db[k] = v
     return big_resp
 
-def make_hotword_view():
-    cdb = CouchDB()
-    hot_db = cdb.get_db('hotword_50_hour')
+

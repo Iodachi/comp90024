@@ -81,10 +81,12 @@ print('http://127.0.0.1:8000/api/tweet/top/word/20/Oct-12-2020-00:00:00/Oct-13-2
 def get_top(request, mode = 'word', n = 20, timeS = None, timeE=None):
     if request.method == 'GET':
         cdb = CouchDB()
-        data = cdb.get_db('hotword_50_hour')
+        data = cdb.get_db('hotword_all')
+        sent_db = cdb.get_db('sentiment_analysis')
         l = generate_data_key(timeS,timeE)
         print('here')
         resp = get_top_word_1(l,data, mode, n)
+        resp['sentiment_score'] = process_sentiment(timeS, timeE, sent_db)
         if resp:
             return HttpResponse(ujson.dumps(resp), content_type='application/json')
         else:
@@ -177,3 +179,4 @@ def get_langHeat(request, lang):
             return HttpResponseBadRequest(resp)
     else:
         return HttpResponseBadRequest('request should be get')
+

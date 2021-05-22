@@ -2,6 +2,7 @@ import json
 from tqdm import tqdm
 import jsonlines
 import random
+from test import *
 
 def read_small_json(input_file):
     with open(input_file) as f:
@@ -51,6 +52,7 @@ def make_name_data(name, data):
 from datetime import datetime, timedelta
 
 def get_time(elm):
+    print(elm[-5:])
     if '-+' in elm:
         date = datetime.strptime(elm, '%a-%b-%d-%H:%M:%S-+0000-%Y')
     elif elm[-5:] == '+0000':
@@ -188,17 +190,75 @@ def random_float(low, high):
 
 def precess_au_heatmap(view):
     resp = {"type": "FeatureCollection","features": []}
+    mem = {}
     for k in view:
         v = k.key
+        value = k.value
+        if value and ('australia' in value.lower() or 'vic' in value.lower()):
+            
+            if value not in mem:
+                #print(value)
+                mem[value] = []
+            else:
+                #print(value,len(mem[value]))
+                a = 1
+        else:
+            continue
         if v[2]:
-            if len(v[2][0]) == 4:
-                x = random_float(v[2][0][0][0], v[2][2][0][0])
-                y = random_float(v[2][0][0][1], v[2][2][0][1])
+            sign = random.choice([-1,1])
+            if len(mem[value]) > 5:
+                cord1 = random.choice(mem[value])
+                cord2 = random.choice(mem[value])
+                
+                if abs(cord1[0] - cord2[0]) < 1:
+                    x = random_float(cord1[0], cord2[0])
+                else:
+                    x = cord1[0] + sign * random_float(0, 0.5)
+                sign = random.choice([-1,1])
+                if abs(cord1[1] - cord2[1]) < 1:
+                    y = random_float(cord1[1], cord2[1])
+                else:
+                    y = cord1[1] + sign * random_float(0, 0.3)
+                #cord = [x,y]
+                #dx = random_float(0, 0.01)
+                #dy = random_float(0, 0.01)
+                #cord = [cord1[0] + dx, cord1[1] + dy]
+                cord = [x, y]
+            else:
+                if abs(v[2][0][0][0] - v[2][0][2][0]) < 0.5:
+                    x = random_float(v[2][0][0][0], v[2][0][2][0])
+                else:
+                    x = v[2][0][0][0] + (v[2][0][2][0] - v[2][0][0][0])/2 + sign * random_float(0,0.3)
+                sign = random.choice([-1,1])
+                if abs(v[2][0][0][1] - v[2][0][2][1]) < 0.5:
+                    y = random_float(v[2][0][0][1], v[2][0][2][1])
+                else:
+                    y = v[2][0][0][1] + (v[2][0][2][1] - v[2][0][0][1])/2 + sign * random_float(0,0.3)
+                
+                if 120 < x and x < 123 and -28 < y and y < -23:
+                    x = 130.987182 + sign * random_float(0,0.2)
+                    sign = random.choice([-1,1])
+                    y = -25.3 + sign * random_float(0,0.1)
+                    print('yes',[y,x], value)
+                
+                if 133 < x and x < 135.5 and -26 < y and y < -24 and 'Alice' not in value:
+                    x = 130.987182 + sign * random_float(0,0.2)
+                    sign = random.choice([-1,1])
+                    y = -25.3 + sign * random_float(0,0.1)
+                    print('yes',[y,x], value)
+                
+    
                 cord = [y,x]
+
         if v[0]:
-            cord = v[0].copy()
+            cord = v[0]['coordinates'].copy()
+            cord.reverse()
         if v[1]:
-            cord = v[0].copy()
+            cord = v[1]['coordinates'].copy()
+            cord.reverse()
+
+        if v[0] or v[1]:
+            mem[value].append(cord)
         
         geo = make_geo(cord)
         resp['features'].append(geo)
@@ -229,3 +289,55 @@ def stella(resp):
         new_resp[k] = new
 
     return new_resp
+
+
+def process_sentiment(start, end, sent_db):
+    st = get_front_time(start)
+    et = get_front_time(end)
+    
+    date = [str(st.year), str(st.month), str(st.day), str(st.hour)]
+    if st.year == et.year and st.month==et.month and st.day==et.day:
+        score = 0
+        c = 0
+        hour_table = sent_db.view('_design/dictionary/_view/sentiment', group=True, group_level=4)
+        for v in hour_table:
+            if v.key[:-1] == date[:-1]:
+                if int(v.key[3]) in range(st.hour, et.hour):
+                    print(v.key)
+                    score += float(v.value['sum'])
+                    c += 1
+        score = score/c
+    elif st.year == et.year and st.month==et.month:
+        day_table = sent_db.view('_design/dictionary/_view/sentiment', group=True, group_level=3)
+        score = 0
+        c = 1
+        for v in day_table:
+            if v.key[:-1] == date[:-2]:
+                if int(v.key[2]) in range(st.day, et.day):
+                    print(v.key, range(st.day, et.day))
+                    score += float(v.value['sum'])/float(v.value['count'])
+                    c += 1
+        score = score/c
+    elif st.year == et.year:
+        month_table = sent_db.view('_design/dictionary/_view/sentiment', group=True, group_level=2)
+        score = 0
+        c = 1
+        for v in month_table:
+            if v.key[:-1] == date[:-3]:
+                if int(v.key[1]) in range(st.month, et.month):
+                    print(v.key)
+                    score += float(v.value['sum'])/float(v.value['count'])
+                    c += 1
+        score = score/c
+    else:
+        year_table = sent_db.view('_design/dictionary/_view/sentiment', group=True, group_level=1)
+        score = 0
+        c = 1
+        for v in year_table:
+            if v.key[:-1] == date[:-4]:
+                if int(v.key[0]) in range(st.month, et.month):
+                    print(v.key)
+                    score += float(v.value['sum'])/float(v.value['count'])
+                    c += 1
+        score = score/c
+    return score
