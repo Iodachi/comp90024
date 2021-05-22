@@ -6,9 +6,7 @@ class LanguageDistributionBarChart extends React.Component {
       super(props);
 
       this.state = {
-        series: [{
-            data: [400, 430, 448, 470, 540, 580, 690, 1100, 1200, 1380],
-        }],
+        series: [],
         options: {
           chart: {
             type: 'bar',
@@ -30,8 +28,7 @@ class LanguageDistributionBarChart extends React.Component {
             text: 'Loading...'
           },
           xaxis: {
-            categories: ['South Korea', 'Canada', 'United Kingdom', 'Netherlands', 'Italy', 'France', 'Japan',
-            'United States', 'China', 'Germany'],
+            categories: [],
           },
           yaxis: {
             title: {
@@ -53,8 +50,18 @@ class LanguageDistributionBarChart extends React.Component {
     }
 
     componentDidMount(){
-        console.log(this.props)
+        this.data = this.props.data.seires[0].data.slice(0, -2)
+        this.series = [{data: this.data}]
+        this.categories = this.props.data.categories.slice(0, -2)
         this.setState({
+            series: this.series,
+            options: {
+                ...this.state.options,
+                xaxis: {
+                  ...this.state.options.xaxis, 
+                    categories: this.categories,
+                  }
+                }
         })
     }
 
