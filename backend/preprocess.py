@@ -7,7 +7,9 @@ from nltk.corpus import stopwords
 from nltk.tokenize import TweetTokenizer
 import pandas as pd
 import json
-from datetime import timedelta
+from datetime import timedelta,datetime
+from tqdm import tqdm
+
 
 def make_name_data(name, data):
     resp = {}
@@ -54,12 +56,11 @@ def get_all_hashtags(data):
             hashtags[word] = frequency
     return dict(sorted(hashtags.items(), key=lambda item: item[1],reverse=True))
 
-from datetime import datetime
 def get_time_self(elm):
     date = datetime.strptime(elm, '%a %b %d %H:%M:%S +0000 %Y')
     return date
 
-from tqdm import tqdm
+
 def get_topN(table):
     
     tt = TweetTokenizer()
