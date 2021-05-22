@@ -1,7 +1,7 @@
 import 'mapbox-gl/dist/mapbox-gl.css';
 //import melb from "./../melb.geojson"
 import vic from "./../vicpop.geojson"
-import heatmap from "./../processed.geojson"
+import heatmap from "./../heatmap.geojson"
 import covidCase from './../case.geojson'
 import React from 'react'
 import mapboxgl from '!mapbox-gl';// eslint-disable-line import/no-webpack-loader-syntax
@@ -321,6 +321,7 @@ export class Home extends React.Component {
         .then(res => res.json())
         .then(
             (result) => {
+                console.log(result)
                 this.languages = result
             },
             (error) => {
@@ -359,7 +360,7 @@ export class Home extends React.Component {
             }
         });
          
-        map.on("mousemove", "vic-fills", function(e) {
+        map.on("mousemove", "vic-fills", (e) => {
             if (e.features.length > 0) {
             if (hoveredVicId) {
                 map.setFeatureState({source: 'vic', id: hoveredVicId}, { hover: false});
@@ -369,7 +370,7 @@ export class Home extends React.Component {
             }
         });
          
-        map.on("mouseleave", "vic-fills", function() {
+        map.on("mouseleave", "vic-fills", () => {
             if (hoveredVicId) {
                 map.setFeatureState({source: 'vic', id: hoveredVicId}, { hover: false});
             }

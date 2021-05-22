@@ -57,6 +57,7 @@ class TopWordBarChart extends React.Component {
     .then(res => res.json())
     .then(
       (result) => {
+        console.log(result)
         this.setState({
           series: result.series,
           options: {
