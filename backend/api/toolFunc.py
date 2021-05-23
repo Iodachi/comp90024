@@ -3,11 +3,46 @@ from tqdm import tqdm
 import jsonlines
 import random
 from test import *
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import TweetTokenizer
 
 def read_small_json(input_file):
     with open(input_file) as f:
         data = json.load(f)
     return data
+
+def get_word_freq(d, ll):
+    sentence_temp = d.copy()
+    reg = re.compile(r'[a-z]')
+    stopword = set(stopwords.words('english'))
+    for word in ll:
+        word = word.replace('_', '')
+        flag = 0
+        #remove stopwords
+        if word in stopword:
+            flag = 1
+            continue
+        #remove any word that does not contain any English alphabets
+        if not reg.match(word):
+            flag = 1
+            for c in word:
+                if ord(c) >= 97 and ord(c) <= 122: 
+                    flag = 0
+                    break
+        if not flag:
+            if word in sentence_temp: sentence_temp[word]+=1
+            else: sentence_temp[word] = 1
+    
+    sentence_temp = dict(sorted(sentence_temp.items(), key=lambda item: item[1],reverse=True))
+    new ={}
+    c = 0
+    for k, v in sentence_temp.items():
+        new[k] = v
+        c+=1
+        if c > 51:
+            break
+    return new
 
 def read_json_line(input_file, n):
     data = {}
@@ -188,11 +223,13 @@ def precess_case(dataset, loc, rname):
 def random_float(low, high):
     return random.random()*(high-low) + low
 
-def precess_au_heatmap(view):
+def precess_au_heatmap(view, lang, view_16):
     resp = {"type": "FeatureCollection","features": []}
     mem = {}
     for k in view:
         v = k.key
+        if v[-1] != lang:
+            continue
         value = k.value
         if value and ('australia' in value.lower() or 'vic' in value.lower()):
             
@@ -234,19 +271,6 @@ def precess_au_heatmap(view):
                     y = random_float(v[2][0][0][1], v[2][0][2][1])
                 else:
                     y = v[2][0][0][1] + (v[2][0][2][1] - v[2][0][0][1])/2 + sign * random_float(0,0.3)
-                
-                if 120 < x and x < 123 and -28 < y and y < -23:
-                    x = 130.987182 + sign * random_float(0,0.2)
-                    sign = random.choice([-1,1])
-                    y = -25.3 + sign * random_float(0,0.1)
-                    print('yes',[y,x], value)
-                
-                if 133 < x and x < 135.5 and -26 < y and y < -24 and 'Alice' not in value:
-                    x = 130.987182 + sign * random_float(0,0.2)
-                    sign = random.choice([-1,1])
-                    y = -25.3 + sign * random_float(0,0.1)
-                    print('yes',[y,x], value)
-                
     
                 cord = [y,x]
 
@@ -260,6 +284,13 @@ def precess_au_heatmap(view):
         if v[0] or v[1]:
             mem[value].append(cord)
         
+        if cord[0] > 142 and cord[0] < 147 and cord[1] > -39 and cord[1] < -36.14:
+            geo = make_geo(cord)
+            resp['features'].append(geo)
+    
+    for v in view_16:
+        cord = v.value.copy()
+        cord.reverse()
         geo = make_geo(cord)
         resp['features'].append(geo)
     return resp
@@ -341,3 +372,64 @@ def process_sentiment(start, end, sent_db):
                     c += 1
         score = score/c
     return score
+
+
+
+def process_lga_tweet(table):
+    resp = {}
+    covid_keyword = ['covid', 'virus', 'positive', 'case', 'vaccine', 'wuhan', 'lockdown', 'recover','hospital', 'mask', 'lung', 'isola', 'dead', 'death','health','rna','dna','mrna','biontech','pfizer']
+    crime_keyword = ['police', 'durg', 'kill','murder','theaf','rob','000','emergency','suspect','catch','caught']
+    tt = TweetTokenizer()
+
+    for v in table:
+        area = v.value
+        text = v.key[0]
+        score = v.key[1]
+        covid_keyword = ['covid', 'virus', 'positive', 'case', 'vaccine', 'wuhan', 'lockdown', 'recover','hospital', 'mask', 'lung', 'isola', 'dead', 'death','health','rna','dna','mrna','biontech','pfizer']
+        crime_keyword = ['police', 'durg', 'kill','murder','theaf','rob','000','emergency','suspect','catch','caught']
+        if area not in resp:
+            resp[area] = {}
+            resp[area]['covid_count'] = 0
+            resp[area]['crime_count'] = 0
+            resp[area]['full_text'] = ''
+            resp[area]['hotword'] = {}
+            resp[area]['score'] = 0
+            resp[area]['c'] = 0
+            for key in covid_keyword:
+                if key in text:
+                    resp[area]['covid_count'] += 1
+                    break
+            for key in crime_keyword:
+                if key in text:
+                    resp[area]['crime_count'] += 1
+                    break
+            resp[area]['score'] += score
+            resp[area]['score'] += 1.0
+            word_freq = resp[area]['hotword'].copy()
+            ll = [w.lower() for w in tt.tokenize(text)]
+            word_freq = get_word_freq(word_freq,ll)
+            resp[area]['hotword'] = word_freq.copy()
+        else:
+            for key in covid_keyword:
+                if key in text:
+                    resp[area]['covid_count'] += 1
+                    break
+            for key in crime_keyword:
+                if key in text:
+                    resp[area]['crime_count'] += 1
+                    break
+            resp[area]['score'] += score
+            resp[area]['score'] += 1.0
+            word_freq = resp[area]['hotword'].copy()
+            ll = [w.lower() for w in tt.tokenize(text)]
+            word_freq = get_word_freq(word_freq,ll)
+            resp[area]['hotword'] = word_freq.copy()
+    
+    for lga, info in resp.items():
+        info['score'] = info['score']/info['c']
+        info.pop('full_text')
+        info.pop('c')
+
+    return resp
+    
+

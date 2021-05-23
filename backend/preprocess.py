@@ -1,4 +1,5 @@
 
+from backend.test import CouchDB
 from test import *
 from api.toolFunc import *
 import re
@@ -17,37 +18,7 @@ def make_name_data(name, data):
     resp['data'] = data
     return resp
 
-def get_word_freq(d, ll):
-    sentence_temp = d.copy()
-    reg = re.compile(r'[a-z]')
-    stopword = set(stopwords.words('english'))
-    for word in ll:
-        word = word.replace('_', '')
-        flag = 0
-        #remove stopwords
-        if word in stopword:
-            flag = 1
-            continue
-        #remove any word that does not contain any English alphabets
-        if not reg.match(word):
-            flag = 1
-            for c in word:
-                if ord(c) >= 97 and ord(c) <= 122: 
-                    flag = 0
-                    break
-        if not flag:
-            if word in sentence_temp: sentence_temp[word]+=1
-            else: sentence_temp[word] = 1
-    
-    sentence_temp = dict(sorted(sentence_temp.items(), key=lambda item: item[1],reverse=True))
-    new ={}
-    c = 0
-    for k, v in sentence_temp.items():
-        new[k] = v
-        c+=1
-        if c > 51:
-            break
-    return new
+
 
 def get_all_hashtags(data):
     hashtags = {}
@@ -288,17 +259,30 @@ h_db.save(resp)'''
 def save_hotword():
     cdb = CouchDB()
     e_db = cdb.get_db('melbourne20_21')
-    a = cdb.create_db('hotword_all')
-    h_db = cdb.get_db('hotword_all')
+    h_db = cdb.get_db('abc')
     table = e_db.iterview('_design/dictionary/_view/textdate',10000)
-    timeline = get_topN(table)
-    '''with open('timeline_all.json','w') as jj:
-        json.dump(timeline, jj)'''
+    #timeline = get_topN(table)
+    with open('timeline_all_reduce.json','r') as jj:
+        #json.dump(timeline, jj)
+        timeline = json.load(jj)
 
+    word_set = set()
     for k,v in timeline.items():
-        print(k)
-        print(len(list(v.keys())))
-        d = {'data': v}
+        for word in v.keys():
+            word_set.add(word)
+
+    
+    for k,v in timeline.items():
+        word_list = []
+        count_list = []
+        for word in list(word_set):
+            word_list.append(word)
+            if word in v:
+                count_list.append(v[word])
+            else:
+                count_list.append(0)
+        print(k, len(word_list),sum(count_list))
+        d = {'word': word_list, 'count':count_list}
         h_db[k] = d.copy()
         d = {}
 
@@ -326,3 +310,31 @@ def save_lang_heat():
     return big_resp
 
 
+
+def save_lang_heat_all():
+    cdb = CouchDB()
+    au_db = cdb.get_db('melbourne2016')
+    all_db = cdb.get_db('has_location_try')
+    rtable = au_db.view('_design/dictionary/_view/reducelanguage',group = True)
+    big_resp = {}
+    for lang in rtable:
+        table_all = all_db.iterview('_design/dictionary/_view/geo',3000,descending=True)
+        table_16 = au_db.view('_design/dictionary/_view/language', key = lang.key)
+        resp = precess_au_heatmap(table_all,lang,table_16)
+        big_resp[lang.key] = resp
+    s_db = cdb.create_db('heatmap_lang_all')
+    s_db = cdb.get_db('heatmap_lang_all')
+    for k,v in big_resp.items():
+        print(k)
+        s_db[k] = v
+    return big_resp
+
+
+def save_lga_tweet():
+    cdb = CouchDB()
+    s_db = cdb.get_db('sentiment_location')
+    table = s_db.view('_design/dictionary/_view/info')
+    resp = process_lga_tweet(table)
+    result_db = cdb.create_db('lga_tweet')
+    result_db = cdb.get_db('lga_tweet')
+    result_db['lga'] = resp

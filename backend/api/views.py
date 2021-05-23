@@ -95,7 +95,7 @@ def get_top(request, mode = 'word', n = 20, timeS = None, timeE=None):
         return HttpResponseBadRequest('request should be get')
 
 
-print('http://127.0.0.1:8000/api/cases')
+
 def get_cases(request):
     if request.method == 'GET':
         cdb = CouchDB()
@@ -103,8 +103,7 @@ def get_cases(request):
         resp = db.get('dc03849c597d859fe1dbe170262687d0')
         resp.pop('_id')
         resp.pop('_rev')
-        with open('geo.json','w') as ff:
-            json.dump(resp, ff)
+
         if resp:
             return HttpResponse(ujson.dumps(resp), content_type='application/json')
         else:
