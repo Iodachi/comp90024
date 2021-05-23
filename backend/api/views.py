@@ -190,7 +190,9 @@ def get_areaTweet(request):
         
         resp.pop('_id')
         resp.pop('_rev')
-
+        for k,v in resp.items():
+            h = v['hotword'].copy()
+            v['hotword'] = list(h.keys())[:5]
         if resp:
             return HttpResponse(json.dumps(resp), content_type='application/json')
         else:
