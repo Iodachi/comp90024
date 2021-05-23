@@ -1,5 +1,4 @@
 
-from backend.test import CouchDB
 from test import *
 from api.toolFunc import *
 import re
@@ -309,19 +308,40 @@ def save_lang_heat():
         s_db[k] = v
     return big_resp
 
+def get_value_list(table):
+    big ={}
+    for v in table:
+        #print(v)
+        key = v.key.copy()
+        value = v.value
+        lang = key[-1]
+        if lang not in big:
+            print('s')
+            big[lang] = []
+        if value and ('australia' in value.lower() or 'vic' in value.lower()):
+            big[lang].append({'key': key.copy(), 'value': value})
+            #print(len(big[lang]))
+            #print(big[lang][-1])
+        key = []
+        value = ''
+    print('finish')
+    return big
 
 
 def save_lang_heat_all():
     cdb = CouchDB()
     au_db = cdb.get_db('melbourne2016')
-    all_db = cdb.get_db('has_location_try')
     rtable = au_db.view('_design/dictionary/_view/reducelanguage',group = True)
+    f = open('has_loc.json', 'r')
+    table_all = json.load(f)
+    f.close()
     big_resp = {}
     for lang in rtable:
-        table_all = all_db.iterview('_design/dictionary/_view/geo',3000,descending=True)
         table_16 = au_db.view('_design/dictionary/_view/language', key = lang.key)
-        resp = precess_au_heatmap(table_all,lang,table_16)
-        big_resp[lang.key] = resp
+        print(lang.key)
+        if lang.key in table_all:
+            resp = precess_au_heatmap(table_all[lang.key], table_16)
+            big_resp[lang.key] = resp
     s_db = cdb.create_db('heatmap_lang_all')
     s_db = cdb.get_db('heatmap_lang_all')
     for k,v in big_resp.items():
@@ -333,8 +353,10 @@ def save_lang_heat_all():
 def save_lga_tweet():
     cdb = CouchDB()
     s_db = cdb.get_db('sentiment_location')
-    table = s_db.view('_design/dictionary/_view/info')
+    table = s_db.view('_design/dictionary/_view/sentiment')
     resp = process_lga_tweet(table)
     result_db = cdb.create_db('lga_tweet')
     result_db = cdb.get_db('lga_tweet')
     result_db['lga'] = resp
+
+save_lga_tweet()

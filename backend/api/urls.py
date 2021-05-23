@@ -10,5 +10,6 @@ urlpatterns = [
     path("api/language", views.get_lang, name="get_lang"),
     path("api/area/info", views.get_areaInfo, name="get_areaInfo"),
     path("api/area/age", views.get_areaAge, name="get_areaAge"),
+    path("api/area/tweet", views.get_areaTweet, name="get_areaTweet"),
     path("api/language/heatmap/<str:lang>", views.get_langHeat, name="get_langHeat"),
 ]

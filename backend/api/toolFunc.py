@@ -6,6 +6,7 @@ from test import *
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import TweetTokenizer
+import re
 
 def read_small_json(input_file):
     with open(input_file) as f:
@@ -223,27 +224,37 @@ def precess_case(dataset, loc, rname):
 def random_float(low, high):
     return random.random()*(high-low) + low
 
-def precess_au_heatmap(view, lang, view_16):
+def precess_au_heatmap(view, view_16):
     resp = {"type": "FeatureCollection","features": []}
     mem = {}
+    for k in tqdm(view):
+        v = k['key']
+        value = k['value']
+        if value not in mem:
+            #print(value)
+            mem[value] = []
+
+        if v[0]:
+            cord = v[0]['coordinates'].copy()
+            cord.reverse()
+        if v[1]:
+            cord = v[1]['coordinates'].copy()
+            cord.reverse()
+
+        if v[0] or v[1]:
+            mem[value].append(cord)
+
     for k in view:
-        v = k.key
-        if v[-1] != lang:
-            continue
-        value = k.value
-        if value and ('australia' in value.lower() or 'vic' in value.lower()):
-            
-            if value not in mem:
-                #print(value)
-                mem[value] = []
-            else:
-                #print(value,len(mem[value]))
-                a = 1
-        else:
-            continue
+        v = k['key']
+        value = k['value']
+        #print(k)
+        if value not in mem:
+            #print(value)
+            mem[value] = []
+
         if v[2]:
             sign = random.choice([-1,1])
-            if len(mem[value]) > 5:
+            if len(mem[value]) > 0:
                 cord1 = random.choice(mem[value])
                 cord2 = random.choice(mem[value])
                 
@@ -283,16 +294,18 @@ def precess_au_heatmap(view, lang, view_16):
 
         if v[0] or v[1]:
             mem[value].append(cord)
-        
-        if cord[0] > 142 and cord[0] < 147 and cord[1] > -39 and cord[1] < -36.14:
+
+        if cord[1] > 142 and cord[1] < 147 and cord[0] > -39 and cord[0] < -36.14:
+            print(cord)
             geo = make_geo(cord)
             resp['features'].append(geo)
     
-    for v in view_16:
-        cord = v.value.copy()
-        cord.reverse()
-        geo = make_geo(cord)
-        resp['features'].append(geo)
+    for t in view_16:
+        if t.value:
+            cord = t.value.copy()
+            cord.reverse()
+            geo = make_geo(cord)
+            resp['features'].append(geo)
     return resp
 
 def process_lang_heatmap(view):
@@ -383,13 +396,15 @@ def process_lga_tweet(table):
 
     for v in table:
         area = v.value
-        text = v.key[0]
+        text = v.key[0].lower()
+        print(area)
         score = v.key[1]
         covid_keyword = ['covid', 'virus', 'positive', 'case', 'vaccine', 'wuhan', 'lockdown', 'recover','hospital', 'mask', 'lung', 'isola', 'dead', 'death','health','rna','dna','mrna','biontech','pfizer']
         crime_keyword = ['police', 'durg', 'kill','murder','theaf','rob','000','emergency','suspect','catch','caught']
         if area not in resp:
             resp[area] = {}
             resp[area]['covid_count'] = 0
+            resp[area]['tweet_count'] = 0
             resp[area]['crime_count'] = 0
             resp[area]['full_text'] = ''
             resp[area]['hotword'] = {}
@@ -403,8 +418,9 @@ def process_lga_tweet(table):
                 if key in text:
                     resp[area]['crime_count'] += 1
                     break
+            resp[area]['tweet_count'] += 1
             resp[area]['score'] += score
-            resp[area]['score'] += 1.0
+            resp[area]['c'] += 1.0
             word_freq = resp[area]['hotword'].copy()
             ll = [w.lower() for w in tt.tokenize(text)]
             word_freq = get_word_freq(word_freq,ll)
@@ -418,8 +434,9 @@ def process_lga_tweet(table):
                 if key in text:
                     resp[area]['crime_count'] += 1
                     break
+            resp[area]['tweet_count'] += 1
             resp[area]['score'] += score
-            resp[area]['score'] += 1.0
+            resp[area]['c'] += 1.0
             word_freq = resp[area]['hotword'].copy()
             ll = [w.lower() for w in tt.tokenize(text)]
             word_freq = get_word_freq(word_freq,ll)

@@ -165,7 +165,7 @@ print('http://127.0.0.1:8000/api/language/heatmap/en')
 def get_langHeat(request, lang):
     if request.method == 'GET':
         cdb = CouchDB()
-        db = cdb.get_db('heatmap_lang')
+        db = cdb.get_db('heatmap_lang_all')
         if lang not in db:
             return HttpResponseBadRequest('language not exist')
         resp = db.get(lang)
@@ -179,3 +179,19 @@ def get_langHeat(request, lang):
     else:
         return HttpResponseBadRequest('request should be get')
 
+
+print('http://127.0.0.1:8000/api/area/tweet')
+def get_areaTweet(request):
+    if request.method == 'GET':
+        cdb = CouchDB()
+        db = cdb.get_db('lga_tweet')
+        resp = db.get('lga')
+        resp.pop('_id')
+        resp.pop('_rev')
+
+        if resp:
+            return HttpResponse(json.dumps(resp), content_type='application/json')
+        else:
+            return HttpResponseBadRequest(resp)
+    else:
+        return HttpResponseBadRequest('request should be get')
