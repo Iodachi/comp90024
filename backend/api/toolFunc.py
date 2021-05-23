@@ -2,7 +2,7 @@ import json
 from tqdm import tqdm
 import jsonlines
 import random
-from test import *
+from couchDbHandler import *
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import TweetTokenizer

@@ -132,6 +132,7 @@ def get_lang(request):
 print('http://127.0.0.1:8000/api/area/info')
 def get_areaInfo(request):
     if request.method == 'GET':
+        print('here')
         cdb = CouchDB()
         db = cdb.get_db('area_rent_income_crime')
         resp = db.get('bdb85cf015fe7fe55ca28dd28cd3f2f4')

@@ -1,5 +1,5 @@
 
-from test import *
+from couchDbHandler import *
 from api.toolFunc import *
 import re
 import nltk
@@ -10,14 +10,11 @@ import json
 from datetime import timedelta,datetime
 from tqdm import tqdm
 
-
 def make_name_data(name, data):
     resp = {}
     resp['name'] = name
     resp['data'] = data
     return resp
-
-
 
 def get_all_hashtags(data):
     hashtags = {}
@@ -29,7 +26,6 @@ def get_all_hashtags(data):
 def get_time_self(elm):
     date = datetime.strptime(elm, '%a %b %d %H:%M:%S +0000 %Y')
     return date
-
 
 def get_topN(table):
     
@@ -160,18 +156,6 @@ def save_area_rent_income_crime():
     ic_db.save(resp)
     return resp
 
-'''def conver_hour_day():
-    cdb = CouchDB()
-    h_db = cdb.get_db('hotword_50_hour')
-    key_str = ''
-    for i in tqdm(data.view('_all_docs')):
-        if key_str != i.id[:-2]
-        if i.id in l:
-            w = data.get(i.id)
-            w.pop('_id')
-            w.pop('_rev')
-            total += Counter(w)'''
-
 def save_au_heat():
     cdb = CouchDB()
     au_db = cdb.get_db('has_location_try')
@@ -184,8 +168,6 @@ def save_au_heat():
     ic_db = cdb.get_db('au_heatmap')
     ic_db['au_heat_new'] = resp
     return resp
-
-#resp = save_au_heat()
 
 def save_area_age():
     age = pd.read_csv('./api/data/age.csv')
@@ -242,19 +224,6 @@ def save_area_age():
     ric_db['age_15'] = resp
     return resp
 
-
-'''
-cdb = CouchDB()
-a = cdb.create_db('language')
-h_db = cdb.get_db('language')
-resp = get_lang()
-h_db.save(resp)
-
-a = cdb.create_db('cases')
-h_db = cdb.get_db('cases')
-resp = get_cases()
-h_db.save(resp)'''
-
 def save_hotword():
     cdb = CouchDB()
     e_db = cdb.get_db('melbourne20_21')
@@ -286,11 +255,6 @@ def save_hotword():
         d = {}
 
     return timeline
-
-#resp = save_hotword()
-#resp = save_area_age()
-
-
 
 def save_lang_heat():
     cdb = CouchDB()
@@ -358,3 +322,4 @@ def save_lga_tweet():
     result_db = cdb.create_db('lga_tweet')
     result_db = cdb.get_db('lga_tweet')
     result_db['lga'] = resp
+
