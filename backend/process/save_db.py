@@ -181,20 +181,12 @@ def save_circle_tweet():
 
 def save_lga_tweet():
     cdb = CouchDB()
-    s_db = cdb.get_db('sentiment_location')
+    s_db = cdb.get_db('sentiment_location_lga')
     table = s_db.view('_design/dictionary/_view/sentiment')
-    a = set()
-    for v in table:
-        area = v.value
-        text = v.key[0].lower()
-        if area == 'MELBOURNE':
-            print(1)
-        else:
-            a.add(area)
-    print(a)
-    #resp = process_lga_tweet(table)
-    '''result_db = cdb.create_db('lga_tweet')
-    result_db = cdb.get_db('lga_tweet')
-    result_db['lga'] = resp'''
 
-save_circle_tweet()
+    resp = process_lga_tweet(table)
+    result_db = cdb.create_db('lga_tweet_info')
+    result_db = cdb.get_db('lga_tweet_info')
+    result_db['lga'] = resp
+
+save_lga_tweet()

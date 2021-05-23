@@ -185,7 +185,7 @@ print('http://127.0.0.1:8000/api/area/tweet')
 def get_areaTweet(request):
     if request.method == 'GET':
         cdb = CouchDB()
-        db = cdb.get_db('lga_tweet')
+        db = cdb.get_db('lga_tweet_info')
         resp = db.get('lga')
         
         resp.pop('_id')

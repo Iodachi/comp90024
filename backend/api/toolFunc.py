@@ -393,10 +393,9 @@ def process_lga_tweet(table):
     crime_keyword = ['police', 'durg', 'kill','murder','theaf','rob','000','emergency','suspect','catch','caught']
     tt = TweetTokenizer()
 
-    for v in table:
+    for v in tqdm(table):
         area = v.value
         text = v.key[0].lower()
-        print(area)
         score = v.key[1]
         covid_keyword = ['covid', 'virus', 'positive', 'case', 'vaccine', 'wuhan', 'lockdown', 'recover','hospital', 'mask', 'lung', 'isola', 'dead', 'death','health','rna','dna','mrna','biontech','pfizer']
         crime_keyword = ['police', 'durg', 'kill','murder','theaf','rob','000','emergency','suspect','catch','caught']
@@ -409,37 +408,23 @@ def process_lga_tweet(table):
             resp[area]['hotword'] = {}
             resp[area]['score'] = 0
             resp[area]['c'] = 0
-            for key in covid_keyword:
-                if key in text:
-                    resp[area]['covid_count'] += 1
-                    break
-            for key in crime_keyword:
-                if key in text:
-                    resp[area]['crime_count'] += 1
-                    break
-            resp[area]['tweet_count'] += 1
-            resp[area]['score'] += score
+
+        for key in covid_keyword:
+            if key in text:
+                resp[area]['covid_count'] += 1
+                break
+        for key in crime_keyword:
+            if key in text:
+                resp[area]['crime_count'] += 1
+                break
+        resp[area]['tweet_count'] += 1
+        resp[area]['score'] += score
+        if score != 0:
             resp[area]['c'] += 1.0
-            word_freq = resp[area]['hotword'].copy()
-            ll = [w.lower() for w in tt.tokenize(text)]
-            word_freq = get_word_freq(word_freq,ll)
-            resp[area]['hotword'] = word_freq.copy()
-        else:
-            for key in covid_keyword:
-                if key in text:
-                    resp[area]['covid_count'] += 1
-                    break
-            for key in crime_keyword:
-                if key in text:
-                    resp[area]['crime_count'] += 1
-                    break
-            resp[area]['tweet_count'] += 1
-            resp[area]['score'] += score
-            resp[area]['c'] += 1.0
-            word_freq = resp[area]['hotword'].copy()
-            ll = [w.lower() for w in tt.tokenize(text)]
-            word_freq = get_word_freq(word_freq,ll)
-            resp[area]['hotword'] = word_freq.copy()
+        word_freq = resp[area]['hotword'].copy()
+        ll = [w.lower() for w in tt.tokenize(text)]
+        word_freq = get_word_freq(word_freq,ll)
+        resp[area]['hotword'] = word_freq.copy()
     
     for lga, info in resp.items():
         info['score'] = info['score']/info['c']
