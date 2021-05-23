@@ -139,11 +139,12 @@ def get_top_word_1(l, data,mode = 'word', n = 20):
             c += 1
     return resp
 
-def generate_data_key(start, end):
+def generate_data_key(start):
     l = []
     delta = timedelta(hours=1)
     start = get_front_time(start)
-    end =  get_front_time(end)
+    delta_day = timedelta(days=1)
+    end = start + delta_day
     while start < end:
         l.append(start.strftime('%Y/%m/%d/%H'))
         start += delta
@@ -335,10 +336,10 @@ def stella(resp):
     return new_resp
 
 
-def process_sentiment(start, end, sent_db):
+def process_sentiment(start, sent_db):
     st = get_front_time(start)
-    et = get_front_time(end)
-    
+    delta_day = timedelta(days=1)
+    et = st + delta_day
     date = [str(st.year), str(st.month), str(st.day), str(st.hour)]
     if st.year == et.year and st.month==et.month and st.day==et.day:
         score = 0
