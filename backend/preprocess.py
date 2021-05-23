@@ -358,5 +358,3 @@ def save_lga_tweet():
     result_db = cdb.create_db('lga_tweet')
     result_db = cdb.get_db('lga_tweet')
     result_db['lga'] = resp
-
-save_lga_tweet()
