@@ -1,6 +1,5 @@
 
-from backend.test import CouchDB
-from test import *
+from couchDbHandler import *
 from api.toolFunc import *
 import re
 import nltk
@@ -11,14 +10,11 @@ import json
 from datetime import timedelta,datetime
 from tqdm import tqdm
 
-
 def make_name_data(name, data):
     resp = {}
     resp['name'] = name
     resp['data'] = data
     return resp
-
-
 
 def get_all_hashtags(data):
     hashtags = {}
@@ -30,7 +26,6 @@ def get_all_hashtags(data):
 def get_time_self(elm):
     date = datetime.strptime(elm, '%a %b %d %H:%M:%S +0000 %Y')
     return date
-
 
 def get_topN(table):
     
@@ -161,18 +156,6 @@ def save_area_rent_income_crime():
     ic_db.save(resp)
     return resp
 
-'''def conver_hour_day():
-    cdb = CouchDB()
-    h_db = cdb.get_db('hotword_50_hour')
-    key_str = ''
-    for i in tqdm(data.view('_all_docs')):
-        if key_str != i.id[:-2]
-        if i.id in l:
-            w = data.get(i.id)
-            w.pop('_id')
-            w.pop('_rev')
-            total += Counter(w)'''
-
 def save_au_heat():
     cdb = CouchDB()
     au_db = cdb.get_db('has_location_try')
@@ -185,8 +168,6 @@ def save_au_heat():
     ic_db = cdb.get_db('au_heatmap')
     ic_db['au_heat_new'] = resp
     return resp
-
-#resp = save_au_heat()
 
 def save_area_age():
     age = pd.read_csv('./api/data/age.csv')
@@ -243,19 +224,6 @@ def save_area_age():
     ric_db['age_15'] = resp
     return resp
 
-
-'''
-cdb = CouchDB()
-a = cdb.create_db('language')
-h_db = cdb.get_db('language')
-resp = get_lang()
-h_db.save(resp)
-
-a = cdb.create_db('cases')
-h_db = cdb.get_db('cases')
-resp = get_cases()
-h_db.save(resp)'''
-
 def save_hotword():
     cdb = CouchDB()
     e_db = cdb.get_db('melbourne20_21')
@@ -288,11 +256,6 @@ def save_hotword():
 
     return timeline
 
-#resp = save_hotword()
-#resp = save_area_age()
-
-
-
 def save_lang_heat():
     cdb = CouchDB()
     au_db = cdb.get_db('melbourne2016')
@@ -309,19 +272,40 @@ def save_lang_heat():
         s_db[k] = v
     return big_resp
 
+def get_value_list(table):
+    big ={}
+    for v in table:
+        #print(v)
+        key = v.key.copy()
+        value = v.value
+        lang = key[-1]
+        if lang not in big:
+            print('s')
+            big[lang] = []
+        if value and ('australia' in value.lower() or 'vic' in value.lower()):
+            big[lang].append({'key': key.copy(), 'value': value})
+            #print(len(big[lang]))
+            #print(big[lang][-1])
+        key = []
+        value = ''
+    print('finish')
+    return big
 
 
 def save_lang_heat_all():
     cdb = CouchDB()
     au_db = cdb.get_db('melbourne2016')
-    all_db = cdb.get_db('has_location_try')
     rtable = au_db.view('_design/dictionary/_view/reducelanguage',group = True)
+    f = open('has_loc.json', 'r')
+    table_all = json.load(f)
+    f.close()
     big_resp = {}
     for lang in rtable:
-        table_all = all_db.iterview('_design/dictionary/_view/geo',3000,descending=True)
         table_16 = au_db.view('_design/dictionary/_view/language', key = lang.key)
-        resp = precess_au_heatmap(table_all,lang,table_16)
-        big_resp[lang.key] = resp
+        print(lang.key)
+        if lang.key in table_all:
+            resp = precess_au_heatmap(table_all[lang.key], table_16)
+            big_resp[lang.key] = resp
     s_db = cdb.create_db('heatmap_lang_all')
     s_db = cdb.get_db('heatmap_lang_all')
     for k,v in big_resp.items():
@@ -333,8 +317,9 @@ def save_lang_heat_all():
 def save_lga_tweet():
     cdb = CouchDB()
     s_db = cdb.get_db('sentiment_location')
-    table = s_db.view('_design/dictionary/_view/info')
+    table = s_db.view('_design/dictionary/_view/sentiment')
     resp = process_lga_tweet(table)
     result_db = cdb.create_db('lga_tweet')
     result_db = cdb.get_db('lga_tweet')
     result_db['lga'] = resp
+
