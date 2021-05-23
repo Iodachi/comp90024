@@ -77,16 +77,16 @@ def get_employment(request):
     else:
         return HttpResponseBadRequest('request should be get')
 
-print('http://127.0.0.1:8000/api/tweet/top/word/10/Oct-12-2020-00:00:00')
-def get_top(request, mode = 'word', n = 10, timeS = None):
+print('http://127.0.0.1:8000/api/tweet/top/word/20/Oct-12-2020-00:00:00/Oct-13-2020-00:00:00')
+def get_top(request, mode = 'word', n = 20, timeS = None, timeE=None):
     if request.method == 'GET':
         cdb = CouchDB()
         data = cdb.get_db('hotword_all')
         sent_db = cdb.get_db('sentiment_analysis')
-        l = generate_data_key(timeS)
+        l = generate_data_key(timeS,timeE)
         print('here')
         resp = get_top_word_1(l,data, mode, n)
-        resp['sentiment_score'] = process_sentiment(timeS, sent_db)
+        resp['sentiment_score'] = process_sentiment(timeS, timeE, sent_db)
         if resp:
             return HttpResponse(ujson.dumps(resp), content_type='application/json')
         else:
@@ -190,9 +190,7 @@ def get_areaTweet(request):
         
         resp.pop('_id')
         resp.pop('_rev')
-        for k,v in resp.items():
-            h = v['hotword'].copy()
-            v['hotword'] = list(h.keys())[:5]
+
         if resp:
             return HttpResponse(json.dumps(resp), content_type='application/json')
         else:
