@@ -90,7 +90,8 @@ class Sidebar extends React.Component{
     this.state = {
       scenario: null,
       selectedStartDate: new Date('2020-10-01T00:00:00'),
-      selectedEndDate: new Date('2021-05-01T00:00:00'),
+      startDate: new Date('2020-10-01T00:00:00'),
+      endDate: new Date('2021-01-13T00:00:00'),
       isWordOrTag: false,
       language: "ar",
     };
@@ -103,12 +104,6 @@ class Sidebar extends React.Component{
   handleStartDateChange = (date) => {
     this.setState({
       selectedStartDate: date,
-    });
-  };
-
-   handleEndDateChange = (date) => {
-    this.setState({
-      selectedEndDate: date,
     });
   };
 
@@ -232,7 +227,8 @@ class Sidebar extends React.Component{
           margin="normal"
           id="start-date-picker-inline"
           label="Start date"
-          maxDate={this.state.selectedEndDate}
+          maxDate={this.state.endDate}
+          minDate={this.state.startDate}
           value={this.state.selectedStartDate}
           onChange={this.handleStartDateChange}
           KeyboardButtonProps={{
@@ -249,7 +245,7 @@ class Sidebar extends React.Component{
             'aria-label': 'change time',
           }}
         />
-        <KeyboardDatePicker
+        {/* <KeyboardDatePicker
           disableToolbar
           variant="inline"
           format="MM/dd/yyyy"
@@ -257,13 +253,14 @@ class Sidebar extends React.Component{
           id="end-date-picker-inline"
           label="End date"
           minDate={this.state.selectedStartDate}
+          maxDate={this.state.endDate}
           value={this.state.selectedEndDate}
           onChange={this.handleEndDateChange}
           KeyboardButtonProps={{
             'aria-label': 'change date',
           }}
-        />
-        <KeyboardTimePicker
+        /> */}
+        {/* <KeyboardTimePicker
           margin="normal"
           id="end-time-picker"
           label="End time"
@@ -272,7 +269,7 @@ class Sidebar extends React.Component{
           KeyboardButtonProps={{
             'aria-label': 'change time',
           }}
-        />
+        /> */}
         </Grid>
 
     <Grid>
@@ -281,7 +278,6 @@ class Sidebar extends React.Component{
       </Button>} modal>
       <TopWordBarChart 
         startDate={this.state.selectedStartDate} 
-        endDate={this.state.selectedEndDate}
         isWordOrTag={this.state.isWordOrTag}/>
       </Popup>
     </Grid>

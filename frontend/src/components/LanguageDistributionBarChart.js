@@ -60,7 +60,11 @@ class LanguageDistributionBarChart extends React.Component {
                 xaxis: {
                   ...this.state.options.xaxis, 
                     categories: this.categories,
-                  }
+                },
+                title: {
+                    ...this.state.options.xais,
+                    text: this.props.name
+                }
                 }
         })
     }

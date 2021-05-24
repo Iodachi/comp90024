@@ -50,7 +50,7 @@ class EmploymentBarChart extends React.Component {
     }
 
     componentDidMount() {
-        fetch("http://172.26.133.226:8000/api/employment")
+        fetch("http://127.0.0.1:8000/api/employment")
           .then(res => res.json())
           .then(
             (result) => {
