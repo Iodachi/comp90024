@@ -1,12 +1,14 @@
 import React from 'react'
 import Chart from 'react-apexcharts'
 import './TopWordBarChart.css'
+import { Emoji } from 'emoji-mart'
 
 class TopWordBarChart extends React.Component {
     constructor(props) {
       super(props);
 
       this.state = {
+        sentiment: ':question:',
         series:  [],
         options: {
           chart: {
@@ -49,16 +51,42 @@ class TopWordBarChart extends React.Component {
       
       };
     }
+
+    getSentimentLevel = (score) => {
+      if(score < -0.2){
+        return ":rage:"
+      } else if (score >= -0.2 && score < -0.1){
+        return ":worried:"
+      } else if (score >= -0.1 && score < 0){
+        return ":pensive:"
+      } else if (score >= 0 && score < 0.1){
+        return ":neutral_face:"
+      } else if (score >= 0.1 && score < 0.2){
+        return ":slightly_smiling_face:"
+      } else if (score >= 0.2 && score < 0.3){
+        return ":grin:"
+      } else if (score >= 0.3){
+        return ":smiling_face_with_3_hearts:"
+      } 
+    }
+
     componentDidMount(){
+        const year = this.props.startDate.getFullYear()
+        const month = this.props.startDate.getMonth()
+        const day = this.props.startDate.getDate()
+        const hours = this.props.startDate.getHours()
         const startDate = String(this.props.startDate).slice(4, 24).replaceAll(' ', '-')
-        const endDate = String(this.props.endDate).slice(4, 24).replaceAll(' ', '-')
+        var date = new Date(year, month, day, hours);
+        date.setDate(this.props.startDate.getDate() + 1)
+        const endDate = String(date).slice(4, 24).replaceAll(' ', '-')
         const isWordOrTag = this.props.isWordOrTag ? 'tag' : 'word'
         fetch(`http://127.0.0.1:8000/api/tweet/top/${isWordOrTag}/10/${startDate}/${endDate}`)
     .then(res => res.json())
     .then(
       (result) => {
-        console.log(result)
         this.setState({
+          sentiment: this.getSentimentLevel(result.sentiment_score),
+          sentiment_score: result.sentiment_score.toFixed(5),
           series: result.series,
           options: {
             ...this.state.options,
@@ -81,6 +109,11 @@ class TopWordBarChart extends React.Component {
       return (
         <div className="app">
         <div className="row">
+          <div className="sentiment">
+            Sentiment level:
+            <Emoji emoji={this.state.sentiment} size={50} />
+            ({this.state.sentiment_score})
+          </div>
           <div className="mixed-chart">
             <Chart
               options={this.state.options}

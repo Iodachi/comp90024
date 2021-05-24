@@ -70,17 +70,29 @@ export class Home extends React.Component {
         if (this.isCovid){
         var colors = ['#fed976', '#feb24c', '#fd8d3c', '#fc4e2a', '#e31a1c'];
         map.on('load', function () {  
-            // fetch("http://127.0.0.1:8000/api/cases")
-            // .then(res => res.json())
-            // .then(
-            //     (result) => {
-            //        this.covidCase = result
-            //     },
-            //     (error) => {
-            //         this.setState({
-            //             error
-            //         });
-            // })
+            fetch("http://127.0.0.1:8000/api/area/tweet")
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.tweet = result
+                },
+                (error) => {
+                    this.setState({
+                        error
+                    });
+            })
+
+            fetch("http://127.0.0.1:8000/api/area/info")
+            .then(res => res.json())
+            .then(
+                (result) => {
+                   this.aurin = result
+                },
+                (error) => {
+                    this.setState({
+                        error
+                    });
+            })
 
             map.addSource("covid", {
                 "type": "geojson",
@@ -148,6 +160,79 @@ export class Home extends React.Component {
                 'circle-stroke-width': 1,
                 'circle-stroke-color': '#fff'
                 }
+            });
+
+            map.addSource("vic", {
+                "type": "geojson",
+                "data": vic,
+                'generateId': true 
+            });
+    
+            map.addLayer({
+                "id": "vic-fills",
+                "type": "fill",
+                "source": "vic",
+                "layout": {},
+                "paint": {
+                'fill-color': "#627BC1",
+                "fill-opacity": ["case",
+                ["boolean", ["feature-state", "hover"], false],
+                    0.5,
+                    0.1
+                ]
+                }
+            });
+             
+            map.addLayer({
+                "id": "vic-borders",
+                "type": "line",
+                "source": "vic",
+                "layout": {},
+                "paint": {
+                "line-color": "#627BC1",
+                "line-width": 2,
+                "line-opacity": 0.4
+                }
+            });
+             
+            map.on("mousemove", "vic-fills", (e) => {
+                if (e.features.length > 0) {
+                if (hoveredVicId) {
+                    map.setFeatureState({source: 'vic', id: hoveredVicId}, { hover: false});
+                }
+                hoveredVicId = e.features[0].id;
+                map.setFeatureState({source: 'vic', id: hoveredVicId}, { hover: true});
+                }
+            });
+             
+            map.on("mouseleave", "vic-fills", () => {
+                if (hoveredVicId) {
+                    map.setFeatureState({source: 'vic', id: hoveredVicId}, { hover: false});
+                }
+                hoveredVicId =  null;
+            });
+    
+            map.on('click', 'vic-fills', (e) => {
+                const name = e.features[0].properties.vic_lga__3
+                const tweetInfo = this.tweet[e.features[0].properties.vic_lga__3]
+                const aurinInfo = this.aurin[e.features[0].properties.vic_lga__3]
+                const topWords = tweetInfo ? tweetInfo["hotword"] : "no data"
+                const covid = tweetInfo ? tweetInfo["covid_count"] : "no data"
+                const crime = tweetInfo ? tweetInfo["crime_count"] : "no data"
+
+                const income = aurinInfo["income"]['median']
+                const rent = aurinInfo["rent"]
+                const crimeAurin = JSON.stringify(aurinInfo["crime"])
+
+                new mapboxgl.Popup()
+                .setLngLat(e.lngLat)
+                .setHTML(`<p><strong>${name}</strong><p><b>Top tweeted words: </b>${topWords}</p>
+                    <p><b>Covid related tweets: </b>${covid}</p>
+                    <p><b>Crime related tweets: </b>${crime}</p>
+                    <p><b>Average income / year: </b>${income}</p>
+                    <p><b>Average rent / week: </b>${rent}</p>
+                    <p><b>Crime info: </b>${crimeAurin}</p></p>`)
+                .addTo(map);
             });
 
             // inspect a cluster on click
@@ -321,7 +406,6 @@ export class Home extends React.Component {
         .then(res => res.json())
         .then(
             (result) => {
-                console.log(result)
                 this.languages = result
             },
             (error) => {
@@ -405,8 +489,7 @@ export class Home extends React.Component {
                 'data': this.languageHeatmap
                 });
                  
-                map.addLayer(
-                {
+                map.addLayer({
                 'id': 'heat',
                 'type': 'heatmap',
                 'source': 'heatmap',
@@ -428,8 +511,7 @@ export class Home extends React.Component {
                 'waterway-label'
                 );
                  
-                map.addLayer(
-                {
+                map.addLayer({
                 'id': 'heat-point',
                 'type': 'circle',
                 'source': 'heatmap',

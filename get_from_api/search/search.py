@@ -45,7 +45,7 @@ access_token_secret = 'HNDW798po87e9f2NjqVoSUzW2ecvgcvyUeXFeGAkaXvkT'
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth)
-until = '2021-05-21'
+until = '2021-05-23'
 
 # set the database to use
 import couchdb
