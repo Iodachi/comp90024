@@ -231,7 +231,7 @@ export class Home extends React.Component {
                     <p><b>Crime related tweets: </b>${crime}</p>
                     <p><b>Average income / year: </b>${income}</p>
                     <p><b>Average rent / week: </b>${rent}</p>
-                    <p><b>Crime info: </b>${crimeAurin}</p></p>`)
+                    <p><b>Crime count: </b>${crimeAurin}</p></p>`)
                 .addTo(map);
             });
 
