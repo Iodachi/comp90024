@@ -36,7 +36,7 @@ secure_remote_server = Server('http://admin:admin@172.26.133.210:5984/')
 
 parser = argparse.ArgumentParser(description='COMP90024 Project Scrape Research Data')
 parser.add_argument('--batch', type=int, default=1000)
-parser.add_argument('--total_forday', type=int, default=80000)
+parser.add_argument('--total_forday', type=int, default=2000)
 parser.add_argument('--startkey', type=str, default='[\"melbourne\",2020,12,10]')
 parser.add_argument('--endkey', type=str, default='[\"melbourne\",2020,12,10]')
 parser.add_argument('--dbname', type=str, default='twitter_raw')
@@ -50,6 +50,9 @@ tweet_perday = 10000
 
 start_key = args.startkey
 end_key = args.endkey
+end_year = get_time(end_key).year
+end_month = get_time(end_key).month
+end_day = get_time(end_key).day
 date_str = start_key
 serverName = args.dbname
 
@@ -71,7 +74,7 @@ while True:
     print(params['start_key'],params['end_key'])
 
     date = get_time(date_str)
-    if date == datetime(2020,12,15):
+    if date > datetime(end_year,end_month,end_day):
         break
     num = 0
     params['skip'] = str(0)

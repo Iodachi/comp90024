@@ -1,3 +1,5 @@
+#For deploying processing mode
+#
 - hosts: ProcessingNodes
   vars_files:
     - host_vars/environment_variables.yaml

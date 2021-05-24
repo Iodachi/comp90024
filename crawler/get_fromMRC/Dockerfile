@@ -10,4 +10,4 @@ ADD . /workspace
 
 RUN pip install -r requirements.txt
 
-ENTRYPOINT [ "python", "./get_fromMRC_2021.py"]
+CMD [ "python", "./get_fromMRC_2021.py"]
