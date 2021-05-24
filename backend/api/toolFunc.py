@@ -338,15 +338,21 @@ def stella(resp):
 def process_sentiment(start, end, sent_db):
     st = get_front_time(start)
     et = get_front_time(end)
-    date = [str(st.year), str(st.month), str(st.day), str(st.hour)]
+    match = [str(st.year), str(st.month), str(st.day), str(st.hour)]
+    date = []
+    for i in match:
+        if len(i) < 2:
+            i = '0'+i
+        date.append(i)
+
     if st.year == et.year and st.month==et.month and st.day==et.day:
         score = 0
-        c = 0
+        c = 1
         hour_table = sent_db.view('_design/dictionary/_view/sentiment', group=True, group_level=4)
         for v in hour_table:
+            #print(v.key, date[:-1])
             if v.key[:-1] == date[:-1]:
                 if int(v.key[3]) in range(st.hour, et.hour):
-                    print(v.key)
                     score += float(v.value['sum'])
                     c += 1
         score = score/c
@@ -357,7 +363,6 @@ def process_sentiment(start, end, sent_db):
         for v in day_table:
             if v.key[:-1] == date[:-2]:
                 if int(v.key[2]) in range(st.day, et.day):
-                    print(v.key, range(st.day, et.day))
                     score += float(v.value['sum'])/float(v.value['count'])
                     c += 1
         score = score/c
@@ -368,7 +373,6 @@ def process_sentiment(start, end, sent_db):
         for v in month_table:
             if v.key[:-1] == date[:-3]:
                 if int(v.key[1]) in range(st.month, et.month):
-                    print(v.key)
                     score += float(v.value['sum'])/float(v.value['count'])
                     c += 1
         score = score/c
@@ -379,7 +383,6 @@ def process_sentiment(start, end, sent_db):
         for v in year_table:
             if v.key[:-1] == date[:-4]:
                 if int(v.key[0]) in range(st.month, et.month):
-                    print(v.key)
                     score += float(v.value['sum'])/float(v.value['count'])
                     c += 1
         score = score/c
