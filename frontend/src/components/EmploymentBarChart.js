@@ -1,3 +1,10 @@
+/**
+ * The bar chart of employment info in recent years on AURIN
+ * Author: yueying chang
+ * Student id: 1183384
+ * Team: COMP90024 - team 24
+ */
+
 import React from 'react'
 import Chart from 'react-apexcharts'
 

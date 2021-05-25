@@ -1,3 +1,9 @@
+/**
+ * 
+ * Author: yueying chang
+ * Student id: 1183384
+ * Team: COMP90024 - team 24
+ */
 
 import './App.css';
 import Sidebar from './components/Sidebar'
