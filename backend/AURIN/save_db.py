@@ -1,5 +1,7 @@
 
-from couchDbHandler import *
+import sys
+sys.path.append('../')
+from couchDbHandler import CouchDB
 from api.toolFunc import *
 import re
 import nltk
@@ -21,7 +23,7 @@ def get_time_self(elm):
     return date
 
 def get_cases():
-    case = pd.read_csv('./api/data/case.csv')
+    case = pd.read_csv('./data/case.csv')
     cdb = CouchDB()
     db = cdb.get_db('australia_location')
     loc = db.get('f03a9af2e5923e35a8bbb528b1590ac4')
@@ -29,8 +31,8 @@ def get_cases():
     return resp
 
 def get_lang():
-    dataset = pd.read_csv('./api/data/language_spoken_at_home.csv')
-    f = open('./api/data/vic_geo.json','r')
+    dataset = pd.read_csv('./data/language_spoken_at_home.csv')
+    f = open('./data/vic_geo.json','r')
     vic_loc = json.load(f)
     f.close()
     vic_real_name = []
@@ -42,11 +44,11 @@ def get_lang():
     return resp
 
 def save_area_rent_income_crime():
-    crime = pd.read_csv('./api/data/crime.csv').fillna(0)
-    income = pd.read_csv('./api/data/income.csv').fillna(0)
-    rent = pd.read_csv('./api/data/rent.csv').fillna(0)
+    crime = pd.read_csv('./data/crime.csv').fillna(0)
+    income = pd.read_csv('./data/income.csv').fillna(0)
+    rent = pd.read_csv('./data/rent.csv').fillna(0)
 
-    f = open('./api/data/vic_geo.json','r')
+    f = open('./data/vic_geo.json','r')
     vic = json.load(f)
     f.close()
     loc = []
@@ -111,13 +113,14 @@ def save_area_rent_income_crime():
 
     cdb = CouchDB()
     ic_db = cdb.create_db('area_rent_income_crime')
-    ic_db = cdb.get_db('area_rent_income_crime')
+    if ic_db:
+        ic_db = cdb.get_db('area_rent_income_crime')
     ic_db.save(resp)
     return resp
 
 def save_area_age():
-    age = pd.read_csv('./api/data/age.csv')
-    f = open('./api/data/vic_geo.json','r')
+    age = pd.read_csv('./data/age.csv')
+    f = open('./data/vic_geo.json','r')
     vic = json.load(f)
     f.close()
 
@@ -165,9 +168,12 @@ def save_area_age():
 
     cdb = CouchDB()
     ric_db = cdb.create_db('area_age')
-    ric_db = cdb.get_db('area_age')
+    if ric_db:
+        ric_db = cdb.get_db('area_age')
 
     ric_db['age_15'] = resp
     return resp
 
 
+save_area_rent_income_crime()
+save_area_age()
