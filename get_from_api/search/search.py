@@ -38,10 +38,10 @@ locs_large=['GREATER BENDIGO', 'YARRIAMBIACK', 'ALPINE', 'LATROBE', 'SOUTHERN GR
 dis =['8km','14km','80km']
 
 # get author from tweet.api
-consumer_key = 'V2SOvxUCYBSzeo3BoHay1lAU9'
-consumer_secret = 'WRfUyhdirTKBMcHWnYDVEaCHPWofl0iUBankCRPJTpH6pRbcZO'
-access_token = '1384360857715449863-MHYgboHLn33bFqNSj4kjEROaURytaH'
-access_token_secret = '9jk1loVcNdOHlVMtY7hPlEm768kArLMlc3hPsGG7xfNDZ'
+consumer_key = 'SEC7XDaJcHlQiLQsRCIbBnHRq'
+consumer_secret = 'IoAcxYUkmAbJVVDhIh7TRI3jJplUwyFkyZZikW2NKrFGbmsFfL'
+access_token = '1384360857715449863-HT5kAzl3xGXuRSmE7iy36IGQnk5SFQ'
+access_token_secret = 'kRfPS704oLs9uGLele7IR3W8bl2i5rHzUdgJrjjqdL1kh'
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth)
@@ -51,7 +51,6 @@ until = '2021-05-23'
 import couchdb
 server = couchdb.Server('http://admin:admin@172.26.134.73:5984/')
 
-db = server['has_location_in_vic']
 
 try:
     db = server.create('has_location_in_vic')

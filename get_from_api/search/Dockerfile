@@ -10,4 +10,4 @@ ADD . /workspace
 
 RUN pip install -r get_tweet_requirement.txt
 
-ENTRYPOINT [ "python", "./search.py"]
+CMD [ "python", "./search.py"]

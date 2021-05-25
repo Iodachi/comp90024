@@ -2,8 +2,7 @@
 # Part of Assignment 2 - COMP90024 course at The University of Melbourne 
 #
 # Cluster and Cloud Computing - Team 24 
-# 
-
+#
 ---
 # Clone source code repository
 - name: Clone the code repository into home directory
@@ -27,14 +26,14 @@
     content: "{{ docker_proxy_settings }}"
     dest: ~/.docker/config.json
 
-#Build Docker image for tweet harvester
+#Build Docker image for analysing
 - name: Build an image and push it to local repo
   docker_image:
     state: present
     build:
-      path: '/home/ubuntu/comp90024/crawler/get_fromMRC'
+      path: '/home/ubuntu/comp90024/analysis/sentiment'
       pull: yes
-    name: crawler/myscript
+    name: analysis
     tag: latest
     source: build
   become: yes
@@ -44,7 +43,7 @@
 - name: Stop Twitter Harvester Docker container
   become: yes
   docker_container:
-    name: crawler
+    name: analysiscontainer
     state: absent
 
 
@@ -53,8 +52,8 @@
 - name: Create and start Twitter Harvester Docker container
   become: yes
   docker_container:
-    name: crawler
-    image: crawler/myscript
+    name: analysiscontainer
+    image: analysis
     state: started
     pull: false
     recreate: true

@@ -79,8 +79,8 @@ for k,v in timeline.items():
     sentiment[k] = {'sentiment_score':round(sum(score)/(len(score)),4)}
 
 
-a = cdb.create_db('sentiment_analysis')
-h_db = cdb.get_db('sentiment_analysis')
+a = cdb.create_db('sentiment_analysis_pre')
+h_db = cdb.get_db('sentiment_analysis_pre')
 
 
 for k,v in sentiment.items():
