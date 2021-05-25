@@ -1,4 +1,8 @@
 # this code is used to listen to the tweets in real time.
+
+# Author: yalan zhao
+# Student id: 1047739
+# Team: COMP90024 - team 24
 import time
 import tweepy
 from tweepy.streaming import StreamListener

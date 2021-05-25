@@ -1,4 +1,10 @@
 # this code is used to search for the twitters from the past week in a setted circle.
+
+# Author: yalan zhao
+# Student id: 1047739
+# Team: COMP90024 - team 24
+
+# import the library
 import tweepy
 import json
 import requests
