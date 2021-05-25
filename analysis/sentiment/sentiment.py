@@ -64,8 +64,7 @@ import json
 from datetime import timedelta
 cdb = CouchDB()
 e_db = cdb.get_db('melbourne20_21')
-# a = cdb.create_db('hotword_50')
-# h_db = cdb.get_db('hotword_50')
+
 table = e_db.iterview('_design/dictionary/_view/textdate',3000)
 timeline = get_sentiment(table)
 
