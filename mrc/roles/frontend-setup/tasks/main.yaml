@@ -22,35 +22,64 @@
     content: "{{ docker_proxy_settings }}"
     dest: ~/.docker/config.json
 
-# #Build Docker image for tweet harvester
-# - name: Build an image and push it to local repo
-#   docker_image:
-#     state: present
-#     build:
-#       path: '/home/ubuntu/comp90024/crawler/get_fromMRC'
-#       pull: yes
-#     name: crawler/myscript
-#     tag: latest
-#     source: build
-#   become: yes
-#   environment: "{{ proxy_env }}"
+#Build Docker image for frontend
+- name: Build an image and push it to local repo
+  docker_image:
+    state: present
+    build:
+      path: '/home/ubuntu/comp90024/frontend'
+      pull: yes
+    name: frontend
+    tag: latest
+    source: build
+  become: yes
+  environment: "{{ proxy_env }}"
 
-# # Build Docker image for web frontend
-# - name: Configure compose
-#   become: yes
-#   template:
-#     src: "{{ playbook_dir }}/../web/docker-compose.yaml.j2"
-#     dest: "~/cluster-and-cloud-computing-assignment-2/web/docker-compose.yaml"
-#     owner: "{{ ansible_user }}"
-#     group: "{{ ansible_user }}"
 
-# # Run Docker compose to activate web frontend and web backend
-# - name: Run docker compose
-#   become: yes
-#   docker_compose:
-#     project_src: "~/cluster-and-cloud-computing-assignment-2/web/"
-#     pull: false
-#     build: yes
-#     state: present
-#     remove_orphans: no
-#     recreate: always
+# Stop existing Docker containers for frontend and remove them (if any)
+- name: Stop frontend Docker container
+  become: yes
+  docker_container:
+    name: frontend/container
+    state: absent
+
+# Create new docker container for frontend and start container
+- name: Create and start Twitter Harvester Docker container
+  become: yes
+  docker_container:
+    name: frontend/container
+    image: frontend
+    state: started
+    pull: false
+    recreate: true
+
+#Build Docker image for backend
+- name: Build an image and push it to local repo
+  docker_image:
+    state: present
+    build:
+      path: '/home/ubuntu/comp90024/backend'
+      pull: yes
+    name: backend
+    tag: latest
+    source: build
+  become: yes
+  environment: "{{ proxy_env }}"
+
+
+# Stop existing Docker containers for backend and remove them (if any)
+- name: Stop backend Docker container
+  become: yes
+  docker_container:
+    name: backend/container
+    state: absent
+
+# Create new docker container for backend and start container
+- name: Create and start Twitter Harvester Docker container
+  become: yes
+  docker_container:
+    name: backend/container
+    image: backend
+    state: started
+    pull: false
+    recreate: true

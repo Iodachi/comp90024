@@ -70,7 +70,7 @@ export class Home extends React.Component {
         if (this.isCovid){
         var colors = ['#fed976', '#feb24c', '#fd8d3c', '#fc4e2a', '#e31a1c'];
         map.on('load', function () {  
-            fetch("http://127.0.0.1:8000/api/area/tweet")
+            fetch("http://172.26.133.226:8000/api/area/tweet")
             .then(res => res.json())
             .then(
                 (result) => {
@@ -82,7 +82,7 @@ export class Home extends React.Component {
                     });
             })
 
-            fetch("http://127.0.0.1:8000/api/area/info")
+            fetch("http://172.26.133.226:8000/api/area/info")
             .then(res => res.json())
             .then(
                 (result) => {
@@ -231,7 +231,7 @@ export class Home extends React.Component {
                     <p><b>Crime related tweets: </b>${crime}</p>
                     <p><b>Average income / year: </b>${income}</p>
                     <p><b>Average rent / week: </b>${rent}</p>
-                    <p><b>Crime info: </b>${crimeAurin}</p></p>`)
+                    <p><b>Crime count: </b>${crimeAurin}</p></p>`)
                 .addTo(map);
             });
 
@@ -265,7 +265,7 @@ export class Home extends React.Component {
         var colors2 = ['#DFFF00', '#0FFF50', '#4CBB17', '#228B22', '#355E3B', '#023020'];
         map.on('load',  () =>  {
             this.open = false;
-            fetch("http://127.0.0.1:8000/api/area/age")
+            fetch("http://172.26.133.226:8000/api/area/age")
             .then(res => res.json())
             .then(
                 (result) => {
@@ -402,7 +402,7 @@ export class Home extends React.Component {
     }else if (this.isLanguages){
         map.on('load', () => {  
 
-        fetch("http://127.0.0.1:8000/api/language")
+        fetch("http://172.26.133.226:8000/api/language")
         .then(res => res.json())
         .then(
             (result) => {
@@ -474,7 +474,7 @@ export class Home extends React.Component {
             // .addTo(map);
         });
         
-        fetch(`http://127.0.0.1:8000/api/language/heatmap/${this.selectedLanguage}`)
+        fetch(`http://172.26.133.226:8000/api/language/heatmap/${this.selectedLanguage}`)
         .then(res => res.json())
         .then(
             (result) => {

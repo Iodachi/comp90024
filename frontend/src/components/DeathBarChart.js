@@ -51,7 +51,7 @@ class DeathBarChart extends React.Component {
     }
 
     componentDidMount() {
-        fetch("http://127.0.0.1:8000/api/death/all")
+        fetch("http://172.26.133.226:8000/api/death/all")
           .then(res => res.json())
           .then(
             (result) => {

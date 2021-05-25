@@ -38,10 +38,10 @@ locs_large=['GREATER BENDIGO', 'YARRIAMBIACK', 'ALPINE', 'LATROBE', 'SOUTHERN GR
 dis =['8km','14km','80km']
 
 # get author from tweet.api
-consumer_key = 'ZcO30H4KGcg69CkuQGG1syyvU'
-consumer_secret = '6H8WfyPPrNkcDxwwthtEpT5aJfuozSfmNvl4BwjrSiBD4eJufm'
-access_token = '1384360857715449863-3XxwdbavA2s4tUXwUfhZDyVatq55wP'
-access_token_secret = 'HNDW798po87e9f2NjqVoSUzW2ecvgcvyUeXFeGAkaXvkT'
+consumer_key = 'V2SOvxUCYBSzeo3BoHay1lAU9'
+consumer_secret = 'WRfUyhdirTKBMcHWnYDVEaCHPWofl0iUBankCRPJTpH6pRbcZO'
+access_token = '1384360857715449863-MHYgboHLn33bFqNSj4kjEROaURytaH'
+access_token_secret = '9jk1loVcNdOHlVMtY7hPlEm768kArLMlc3hPsGG7xfNDZ'
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth)
@@ -50,7 +50,15 @@ until = '2021-05-23'
 # set the database to use
 import couchdb
 server = couchdb.Server('http://admin:admin@172.26.134.73:5984/')
+
 db = server['has_location_in_vic']
+
+try:
+    db = server.create('has_location_in_vic')
+    
+except:
+    print('database already exist!!')
+    db = server['has_location_in_vic']
 
 for loc in locs_small:
     # get the lat and lng from google api
