@@ -48,17 +48,17 @@
 - name: Stop Twitter Harvester Docker container
   become: yes
   docker_container:
-    name: crawler/getfrommrc
+    name: crawler
     state: absent
 
 
 
-# # Create new docker container for Twitter Harvester and start container
-# - name: Create and start Twitter Harvester Docker container
-#   become: yes
-#   docker_container:
-#     name: crawler/getfrommrc
-#     image: crawler/myscript
-#     state: started
-#     pull: false
-#     recreate: true
+# Create new docker container for Twitter Harvester and start container
+- name: Create and start Twitter Harvester Docker container
+  become: yes
+  docker_container:
+    name: crawler
+    image: crawler/myscript
+    state: started
+    pull: false
+    recreate: true
