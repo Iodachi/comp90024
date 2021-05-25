@@ -4,7 +4,7 @@ import ujson
 import json
 from api.toolFunc import *
 import couchdb
-from test import *
+from couchDbHandler import *
 import pandas as pd
 
 # Create your views here.

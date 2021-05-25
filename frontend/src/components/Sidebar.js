@@ -89,7 +89,7 @@ class Sidebar extends React.Component{
     super(props);
     this.state = {
       scenario: null,
-      selectedStartDate: new Date('2020-10-01T00:00:00'),
+      selectedStartDate: new Date('2020-10-02T00:00:00'),
       startDate: new Date('2020-10-01T00:00:00'),
       endDate: new Date('2021-01-13T00:00:00'),
       isWordOrTag: false,
