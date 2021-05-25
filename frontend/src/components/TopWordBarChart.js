@@ -1,3 +1,10 @@
+/**
+ * The heat words/tags as well as sentiment score info calculated by backend, during a certain timeframe.
+ * Author: yueying chang
+ * Student id: 1183384
+ * Team: COMP90024 - team 24
+ */
+
 import React from 'react'
 import Chart from 'react-apexcharts'
 import './TopWordBarChart.css'
