@@ -2,7 +2,7 @@
 # Part of Assignment 2 - COMP90024 course at The University of Melbourne 
 #
 # Cluster and Cloud Computing - Team 24 
-#Get the tweets send in MRC
+#Get the tweets from streamer to retrieve twitter from streamer
 ---
 # Clone source code repository
 - name: Clone the code repository into home directory
@@ -31,9 +31,9 @@ Build Docker image for tweet harvester
   docker_image:
     state: present
     build:
-      path: '/home/ubuntu/comp90024/get_from_api/search'
+      path: '/home/ubuntu/comp90024/get_from_api/streamer'
       pull: yes
-    name: searchlocation
+    name: streamer
     tag: latest
     source: build
   become: yes
@@ -43,7 +43,7 @@ Build Docker image for tweet harvester
 - name: Stop Twitter Harvester Docker container
   become: yes
   docker_container:
-    name: searchcontainer
+    name: streamercontainer
     state: absent
 
 
@@ -52,8 +52,8 @@ Build Docker image for tweet harvester
 - name: Create and start Twitter Harvester Docker container
   become: yes
   docker_container:
-    name: searchcontainer
-    image: searchlocation
+    name: streamercontainer
+    image: streamer
     state: started
     pull: false
     recreate: true
