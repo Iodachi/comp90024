@@ -48,7 +48,12 @@ class LocateListener(StreamListener):
 
 import couchdb
 server = couchdb.Server('http://admin:admin@172.26.134.73:5984/')
-db = server['has_location_try']
+try:
+    db = server.create('twitter_streamer')
+    
+except:
+    print('database already exist!!')
+    db = server['twitter_streamer']
 listener = LocateListener()
 stream = tweepy.Stream(auth,listener)
 stream.filter(locations = [111,-44,155,-9])
