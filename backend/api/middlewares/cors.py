@@ -1,8 +1,10 @@
 # coding: utf-8
 """
-This files including the views that used to control CORS problem
-"""
+@Author: Guangzheng Hu
+Student ID: 692277
 
+Description: This files including the views that used to control CORS problem
+"""
 from django.utils.deprecation import MiddlewareMixin
 
 

@@ -1,3 +1,9 @@
+"""
+@Author: Guangzheng Hu
+Student ID: 692277
+
+Description: This file contains URL API defined with the frontend.
+"""
 from django.urls import path
 from api import views
 

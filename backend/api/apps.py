@@ -1,3 +1,9 @@
+"""
+@Author: Guangzheng Hu
+Student ID: 692277
+
+Description: Automaticly generated
+"""
 from django.apps import AppConfig
 
 
