@@ -80,7 +80,7 @@ class TopWordBarChart extends React.Component {
         date.setDate(this.props.startDate.getDate() + 1)
         const endDate = String(date).slice(4, 24).replaceAll(' ', '-')
         const isWordOrTag = this.props.isWordOrTag ? 'tag' : 'word'
-        fetch(`http://127.0.0.1:8000/api/tweet/top/${isWordOrTag}/10/${startDate}/${endDate}`)
+        fetch(`http://172.26.133.226:8000/api/tweet/top/${isWordOrTag}/10/${startDate}/${endDate}`)
     .then(res => res.json())
     .then(
       (result) => {
