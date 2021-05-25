@@ -9,6 +9,8 @@
 172.26.134.73
 [instance3]
 172.26.132.70
+[instance4]
+172.26.133.226
 
 [database:children]
 Masternode

@@ -22,6 +22,25 @@
     content: "{{ docker_proxy_settings }}"
     dest: ~/.docker/config.json
 
+# Build Docker image for web frontend and web backend
+- name: Configure compose
+  become: yes
+  template:
+    src: "/home/ubuntu/comp90024/frontend/docker-compose.yaml.j2"
+    dest: "/home/ubuntu/comp90024/frontend/docker-compose.yaml"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+# Run Docker compose to activate web frontend and web backend
+- name: Run docker compose
+  become: yes
+  docker_compose:
+    project_src: "/home/ubuntu/comp90024/frontend/"
+    pull: false
+    build: yes
+    state: present
+    remove_orphans: no
+    recreate: always
 # #Build Docker image for frontend
 # - name: Build an image and push it to local repo
 #   docker_image:

@@ -10,4 +10,4 @@
     - role: nodes-docker-install
     - role: nodes-volume-mount
     - role: frontend-setup
-    - role: data-analysis
+#    - role: data-analysis
