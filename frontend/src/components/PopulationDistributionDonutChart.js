@@ -1,3 +1,10 @@
+/**
+ * The donut chart of population distribution info on AURIN.
+ * Author: yueying chang
+ * Student id: 1183384
+ * Team: COMP90024 - team 24
+ */
+
 import React from 'react'
 import ReactApexChart from 'react-apexcharts';
 import './PopulationDistributionDonutChart.css'

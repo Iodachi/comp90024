@@ -27,33 +27,33 @@
     dest: ~/.docker/config.json
 
 #Build Docker image for tweet harvester
-# - name: Build an image and push it to local repo
-#   docker_image:
-#     state: present
-#     build:
-#       path: '/home/ubuntu/comp90024/get_from_api/search'
-#       pull: yes
-#     name: searchlocation
-#     tag: latest
-#     source: build
-#   become: yes
-#   environment: "{{ proxy_env }}"
+- name: Build an image and push it to local repo
+  docker_image:
+    state: present
+    build:
+      path: '/home/ubuntu/comp90024/get_from_api/search'
+      pull: yes
+    name: searchlocation
+    tag: latest
+    source: build
+  become: yes
+  environment: "{{ proxy_env }}"
 
-# # Stop existing Docker containers for Twitter Harvesters and remove them (if any)
-# - name: Stop Twitter Harvester Docker container
-#   become: yes
-#   docker_container:
-#     name: searchcontainer
-#     state: absent
+# Stop existing Docker containers for Twitter Harvesters and remove them (if any)
+- name: Stop Twitter Harvester Docker container
+  become: yes
+  docker_container:
+    name: searchcontainer
+    state: absent
 
 
 
-# # Create new docker container for Twitter Harvester and start container
-# - name: Create and start Twitter Harvester Docker container
-#   become: yes
-#   docker_container:
-#     name: searchcontainer
-#     image: searchlocation
-#     state: started
-#     pull: false
-#     recreate: true
+# Create new docker container for Twitter Harvester and start container
+- name: Create and start Twitter Harvester Docker container
+  become: yes
+  docker_container:
+    name: searchcontainer
+    image: searchlocation
+    state: started
+    pull: false
+    recreate: true

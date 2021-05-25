@@ -7,8 +7,13 @@ import json
 import re
 
 # get the auth
+<<<<<<< HEAD
 consumer_key = 'ttxVysxszrgEJcKPwqSEIii5r'
 consumer_secret = 'nGGY750XCBrAuXxYJ1zWSX9nwXIBk5t9tuQetrlsGQ3aIYVsat'
+=======
+consumer_key = 'L3f38fT8p28cCv1SM3eipDCjU'
+consumer_secret = 'RTdHtbqs9ToMZI21RkvrTUUHpiUdyqxNfGJDmo5E6tkBGUHT1h'
+>>>>>>> e0664692968eb9e92a326dac11a7046375a8fa4c
 access_token = '1390628851705802754-PrwRNEfvVF6NwX07br8L9yQKF8oH8Q'
 access_token_secret = 'obJyasMKNbRcr9GoipwjdKPjojIVCANvclLlmhZbZBywD'
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
@@ -47,10 +52,17 @@ import couchdb
 server = couchdb.Server('http://admin:admin@172.26.134.73:5984/')
 try:
     db = server.create('twitter_streamer')
+<<<<<<< HEAD
 except:
     print('database already exist!')
     db = server['twitter_streamer']
 
+=======
+    
+except:
+    print('database already exist!!')
+    db = server['twitter_streamer']
+>>>>>>> e0664692968eb9e92a326dac11a7046375a8fa4c
 listener = LocateListener()
 stream = tweepy.Stream(auth,listener)
 stream.filter(locations = [111,-44,155,-9])
