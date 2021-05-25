@@ -1,5 +1,5 @@
 
-from test import *
+from couchDbHandler import *
 from api.toolFunc import *
 import re
 import nltk
