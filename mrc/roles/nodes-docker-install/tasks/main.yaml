@@ -3,8 +3,6 @@
 #
 # Cluster and Cloud Computing - Team 24 
 #
-# Location: Melbourne
-#
 ---
 # Uninstall old Docker
 - name: Uninstall old versions of docker

@@ -3,11 +3,7 @@
 #
 # Cluster and Cloud Computing - Team 24 
 # 
-# Authors: 
-#
-#
-# Location: Melbourne
-#
+
 ---
 # Clone source code repository
 - name: Clone the code repository into home directory

@@ -1,4 +1,9 @@
 #this code is used to get lat and lng information from the google api
+
+# Author: yalan zhao
+# Student id: 1047739
+# Team: COMP90024 - team 24
+
 import json
 import sys
 import requests

@@ -1,4 +1,4 @@
-#For deploying processing mode
+#For deploying processing mode: instance4
 #
 - hosts: ProcessingNodes
   vars_files:
@@ -10,3 +10,4 @@
     - role: nodes-docker-install
     - role: nodes-volume-mount
     - role: frontend-setup
+    - role: data-analysis

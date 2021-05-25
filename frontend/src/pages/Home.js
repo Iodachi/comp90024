@@ -1,3 +1,10 @@
+/**
+ * The homepage containing the map view.
+ * Author: yueying chang
+ * Student id: 1183384
+ * Team: COMP90024 - team 24
+ */
+
 import 'mapbox-gl/dist/mapbox-gl.css';
 //import melb from "./../melb.geojson"
 import vic from "./../vicpop.geojson"
