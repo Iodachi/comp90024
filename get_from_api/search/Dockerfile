@@ -1,4 +1,4 @@
-FROM python:3.8.5
+FROM python:3.8.10-alpine
 
 ENV http_proxy http://wwwproxy.unimelb.edu.au:8000
 ENV https_proxy http://wwwproxy.unimelb.edu.au:8000
@@ -10,4 +10,4 @@ ADD . /workspace
 
 RUN pip install -r get_tweet_requirement.txt
 
-ENTRYPOINT [ "python", "./search.py"]
+CMD [ "python", "./search.py"]

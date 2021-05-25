@@ -1,9 +1,28 @@
+# deploy harvester
+#
+
 - hosts: Masternode
   vars_files:
     - host_vars/environment_variables.yaml
   gather_facts: true
 
   roles:
-    - role: twitter-harvester-setup
+    - role: twitter-harvester-mrc
 
 
+
+- hosts: instance3
+  vars_files:
+    - host_vars/environment_variables.yaml
+  gather_facts: true
+
+  roles:
+    - role: twitter-harvester-api
+
+- hosts: instance2
+  vars_files:
+    - host_vars/environment_variables.yaml
+  gather_facts: true
+
+  roles:
+    - role: twitter-harvester-api-streamer
