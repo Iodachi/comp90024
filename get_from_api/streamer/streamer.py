@@ -7,10 +7,10 @@ import json
 import re
 
 # get the auth
-consumer_key = 'ZcO30H4KGcg69CkuQGG1syyvU'
-consumer_secret = '6H8WfyPPrNkcDxwwthtEpT5aJfuozSfmNvl4BwjrSiBD4eJufm'
-access_token = '1384360857715449863-3XxwdbavA2s4tUXwUfhZDyVatq55wP'
-access_token_secret = 'HNDW798po87e9f2NjqVoSUzW2ecvgcvyUeXFeGAkaXvkT'
+consumer_key = 'L3f38fT8p28cCv1SM3eipDCjU'
+consumer_secret = 'RTdHtbqs9ToMZI21RkvrTUUHpiUdyqxNfGJDmo5E6tkBGUHT1h'
+access_token = '1390628851705802754-PrwRNEfvVF6NwX07br8L9yQKF8oH8Q'
+access_token_secret = 'obJyasMKNbRcr9GoipwjdKPjojIVCANvclLlmhZbZBywD'
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 
