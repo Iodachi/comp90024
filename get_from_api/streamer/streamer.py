@@ -12,11 +12,11 @@ import re
 
 # get the auth
 
-consumer_key = 'ttxVysxszrgEJcKPwqSEIii5r'
-consumer_secret = 'nGGY750XCBrAuXxYJ1zWSX9nwXIBk5t9tuQetrlsGQ3aIYVsat'
+consumer_key = 'GRlbdng3hBwXQIruYflYdOwla'
+consumer_secret = '1svXluj7mqB2d0WdCZFdnEDpwKRQV7Ow86VGWBskBfZQKElsRO'
 
-access_token = '1390628851705802754-PrwRNEfvVF6NwX07br8L9yQKF8oH8Q'
-access_token_secret = 'obJyasMKNbRcr9GoipwjdKPjojIVCANvclLlmhZbZBywD'
+access_token = '1390628851705802754-xRPS5Coqw6UkJ7T4vojBKYfXhb5crX'
+access_token_secret = 'iyxHQTaBTK4KoV4TCzFb4JYd8vHUPL90MzkGZtaxn3yKp'
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 

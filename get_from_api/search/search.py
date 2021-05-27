@@ -44,10 +44,10 @@ locs_large=['GREATER BENDIGO', 'YARRIAMBIACK', 'ALPINE', 'LATROBE', 'SOUTHERN GR
 dis =['8km','14km','80km']
 
 # get author from tweet.api
-consumer_key = 'SEC7XDaJcHlQiLQsRCIbBnHRq'
-consumer_secret = 'IoAcxYUkmAbJVVDhIh7TRI3jJplUwyFkyZZikW2NKrFGbmsFfL'
-access_token = '1384360857715449863-HT5kAzl3xGXuRSmE7iy36IGQnk5SFQ'
-access_token_secret = 'kRfPS704oLs9uGLele7IR3W8bl2i5rHzUdgJrjjqdL1kh'
+consumer_key = '3RdcZ88BFKyPbaZ27CTD725Kb'
+consumer_secret = 'hCfbS1qKLwZjZPsvuvtPkS6NckbDd0KCLhuaDilJI2Z4eGYRdC'
+access_token = '1384360857715449863-GwQDgz8sAvjVenKGxmV69M6vqYRZmH'
+access_token_secret = 'jjeUEaHmfkLnMed5pfS2cY7SlJbz5Ady0XOkQrmp5OTFr'
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth)
