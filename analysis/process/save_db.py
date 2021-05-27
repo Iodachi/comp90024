@@ -1,3 +1,9 @@
+"""
+@Author: Guangzheng Hu
+Student ID: 692277
+
+Description: Fuctions that process data and save processed data into CouchDB
+"""
 import sys
 sys.path.append('../../')
 from backend.couchDbHandler import CouchDB

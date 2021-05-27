@@ -1,3 +1,9 @@
+"""
+@Author: Guangzheng Hu
+Student ID: 692277
+
+Description: Functions in this file will process AURIN data (csv) and save it to CouchDB
+"""
 
 import sys
 sys.path.append('../')
